@@ -8,4 +8,15 @@
     <string name="fab">FAB</string>
     <string name="no_connection">No Connection</string>
     <string name="instruction_text">Please Connect to the Device\'s Access Point</string>
+    <string name="retry">Retry</string>
+    <string name="register_device">Register Device</string>
+    <string name="device_name">Device Name</string>
+    <string name="ssid">SSID</string>
+    <string name="password">Password</string>
+    <string name="contact_1">Contact 1</string>
+    <string name="contact_2">Contact 2 (Optional)</string>
+    <string name="contact_3">Contact 3 (Optional)</string>
+    <string name="number_of_sensors">Number of Sensors</string>
+    <string name="register">Register</string>
+    <string name="additional_information">Additional Information (Optional)</string>
 </resources>

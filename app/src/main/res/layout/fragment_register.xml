@@ -3,42 +3,146 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="32dp"
+    android:paddingRight="32dp"
     tools:context=".register.RegisterFragment">
+
+    <RelativeLayout
+        android:id="@+id/registrationForm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/registerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/register_device"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/deviceNameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/registerText"
+            android:layout_marginTop="24dp"
+            android:hint="@string/device_name"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/ssidInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/deviceNameInput"
+            android:hint="@string/ssid"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/passwordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ssidInput"
+            android:hint="@string/password"
+            android:inputType="textWebPassword" />
+
+        <EditText
+            android:id="@+id/contact1Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/passwordInput"
+            android:hint="@string/contact_1"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/contact2Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contact1Input"
+            android:hint="@string/contact_2"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/contact3Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contact2Input"
+            android:hint="@string/contact_3"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/sensorNumberInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contact3Input"
+            android:hint="@string/number_of_sensors"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/additionalInfoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sensorNumberInput"
+            android:hint="@string/additional_information"
+            android:inputType="text" />
+
+
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/additionalInfoText"
+            android:layout_marginTop="24dp"
+            android:text="@string/register" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/noConnectionView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/noConnectionIcon"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/ic_plug"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_plug" />
 
         <TextView
             android:id="@+id/noConnectionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_connection"
             android:layout_below="@+id/noConnectionIcon"
             android:layout_centerHorizontal="true"
-            android:textSize="32sp"
-            android:fontFamily="@font/roboto_light"/>
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/no_connection"
+            android:textSize="32sp" />
 
         <TextView
             android:id="@+id/instructionText"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/instruction_text"
             android:layout_below="@+id/noConnectionText"
-            android:textAlignment="center"
             android:layout_centerHorizontal="true"
             android:fontFamily="@font/roboto_light"
-            android:textSize="20sp"/>
+            android:text="@string/instruction_text"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/connectionRetryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/instructionText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="@string/retry" />
 
     </RelativeLayout>
 
