@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".login.SignUpFragment">
+
+    <ImageView
+        android:id="@+id/appIcon"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/griffin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"/>
+
+    <TextView
+        android:id="@+id/appNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appIcon"
+        android:layout_centerHorizontal="true"
+        android:text="@string/app_name"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginTop="8dp"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/signUpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appNameText"
+        android:layout_centerHorizontal="true"
+        android:textSize="24sp"
+        android:layout_marginTop="32dp"
+        android:text="@string/sign_up"/>
+
+    <EditText
+        android:id="@+id/nameTextInput"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/signUpText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:hint="@string/name_text_input"
+        android:inputType="textPersonName"
+        android:autofillHints=""/>
+
+    <EditText
+        android:id="@+id/pinInput"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:inputType="numberPassword"
+        android:layout_below="@+id/nameTextInput"
+        android:hint="@string/pin"
+        android:autofillHints="" />
+
+    <Button
+        android:id="@+id/signUpButton"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pinInput"
+        android:layout_centerHorizontal="true"
+        android:text="@string/sign_up"/>
+
+</RelativeLayout>

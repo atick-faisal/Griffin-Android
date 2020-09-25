@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Griffin</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="name_text_input">Your Name</string>
+    <string name="pin">Pin</string>
+    <string name="fab">FAB</string>
 </resources>
