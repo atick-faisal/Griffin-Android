@@ -36,7 +36,7 @@
 
     <EditText
         android:id="@+id/nameTextInput"
-        android:layout_width="300dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/signUpText"
         android:layout_centerHorizontal="true"
@@ -47,7 +47,7 @@
 
     <EditText
         android:id="@+id/pinInput"
-        android:layout_width="300dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:inputType="numberPassword"
@@ -57,7 +57,7 @@
 
     <Button
         android:id="@+id/signUpButton"
-        android:layout_width="300dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pinInput"
         android:layout_centerHorizontal="true"

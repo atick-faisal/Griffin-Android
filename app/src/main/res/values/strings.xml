@@ -6,4 +6,6 @@
     <string name="name_text_input">Your Name</string>
     <string name="pin">Pin</string>
     <string name="fab">FAB</string>
+    <string name="no_connection">No Connection</string>
+    <string name="instruction_text">Please Connect to the Device\'s Access Point</string>
 </resources>
