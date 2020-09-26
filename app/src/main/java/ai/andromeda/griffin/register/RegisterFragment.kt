@@ -2,9 +2,12 @@ package ai.andromeda.griffin.register
 
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.GLOBAL_BROKER_IP
+import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
 import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
+import ai.andromeda.griffin.database.DeviceDatabase
+import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.generateDeviceId
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +16,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.device_list_item.view.*
 import kotlinx.android.synthetic.main.fragment_register.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.io.UnsupportedEncodingException
@@ -21,6 +28,7 @@ import java.io.UnsupportedEncodingException
 @Suppress("SameParameterValue")
 class RegisterFragment : Fragment() {
 
+    private lateinit var deviceDatabase: DeviceDatabase
     private lateinit var client: MqttAndroidClient
     private lateinit var rootView: View
 
@@ -31,6 +39,9 @@ class RegisterFragment : Fragment() {
         rootView = inflater.inflate(R.layout.fragment_register, container, false)
         rootView.connectionRetryButton.setOnClickListener { connectToBroker() }
         rootView.registerButton.setOnClickListener { registerDevice() }
+        deviceDatabase = DeviceDatabase.getInstance(
+            requireNotNull(this.activity).application
+        )
         return rootView
     }
 
@@ -43,7 +54,7 @@ class RegisterFragment : Fragment() {
         val clientId = MqttClient.generateClientId()
         client = MqttAndroidClient(
             this.activity?.applicationContext,
-            GLOBAL_BROKER_IP,
+            LOCAL_BROKER_IP,
             clientId
         )
     }
@@ -156,21 +167,51 @@ class RegisterFragment : Fragment() {
         } else {
             val deviceId = generateDeviceId()
             Log.i(LOG_TAG, "DEVICE ID : $deviceId")
+
+            val deviceName = rootView.deviceNameInput.text.toString()
+            val ssid = rootView.ssidInput.text.toString()
+            val password = rootView.passwordInput.text.toString()
+            val contact1 = rootView.contact1Input.text.toString()
+            val contact2 = rootView.contact2Input.text.toString()
+            val contact3 = rootView.contact3Input.text.toString()
+            val numSensors = rootView.sensorNumberInput.text.toString()
+            val additionalInfo = rootView.additionalInfoText.text.toString()
+
+            val data = DeviceEntity(
+                deviceId = deviceId,
+                deviceName = deviceName,
+                ssid = ssid,
+                password = password,
+                contact1 = contact1,
+                contact2 = contact2,
+                contact3 = contact3,
+                numSensors = numSensors.toInt(),
+                additionalInfo = additionalInfo
+            )
+
             val payload = deviceId +
-                    rootView.deviceNameInput.text.toString() + "," +
-                    rootView.ssidInput.text.toString() + "," +
-                    rootView.passwordInput.text.toString() + "," +
-                    rootView.contact1Input.text.toString() + "," +
-                    rootView.contact2Input.text.toString() + "," +
-                    rootView.contact3Input.text.toString() + "," +
-                    rootView.additionalInfoText.text.toString()
+                    deviceName + "," +
+                    ssid + "," +
+                    password + "," +
+                    contact1 + "," +
+                    contact2 + "," +
+                    contact3 + "," +
+                    numSensors + "," +
+                    additionalInfo
 
             publish(payload)
+            saveData(data)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         client.close()
+    }
+
+    private fun saveData(data: DeviceEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            deviceDatabase.deviceDao.insert(data)
+        }
     }
 }

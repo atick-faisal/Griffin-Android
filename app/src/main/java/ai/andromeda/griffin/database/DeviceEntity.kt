@@ -22,6 +22,8 @@ data class DeviceEntity(
     val contact2: String = "",
     @ColumnInfo(name = "contact_3")
     val contact3: String = "",
+    @ColumnInfo(name = "num_sensors")
+    val numSensors: Int?,
     @ColumnInfo(name = "additional_info")
     val additionalInfo: String = "",
     @ColumnInfo(name = "locked_sensors")
