@@ -1,10 +1,11 @@
 package ai.andromeda.griffin.register
 
 import ai.andromeda.griffin.R
-import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
+import ai.andromeda.griffin.config.Config.GLOBAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
 import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
+import ai.andromeda.griffin.generateDeviceId
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,14 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_register.*
 import kotlinx.android.synthetic.main.fragment_register.view.*
-import kotlinx.android.synthetic.main.fragment_sign_up.*
-import kotlinx.android.synthetic.main.fragment_sign_up.view.*
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.io.UnsupportedEncodingException
-
 
 @Suppress("SameParameterValue")
 class RegisterFragment : Fragment() {
@@ -37,13 +34,21 @@ class RegisterFragment : Fragment() {
         return rootView
     }
 
-    private fun connectToBroker() {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        configureMqttClient()
+    }
+
+    private fun configureMqttClient() {
         val clientId = MqttClient.generateClientId()
         client = MqttAndroidClient(
             this.activity?.applicationContext,
-            LOCAL_BROKER_IP,
+            GLOBAL_BROKER_IP,
             clientId
         )
+    }
+
+    private fun connectToBroker() {
         try {
             if (!client.isConnected) {
                 val token = client.connect()
@@ -54,6 +59,7 @@ class RegisterFragment : Fragment() {
                         Log.i(LOG_TAG, "MQTT CONNECTED!")
                         onConnectionSuccessful()
                         subscribe(SUBSCRIPTION_TOPIC)
+                        subscribe("NEW_TOPIC")
                     }
 
                     override fun onFailure(
@@ -148,7 +154,10 @@ class RegisterFragment : Fragment() {
         ) {
             showMessage("REQUIRED FIELDS CAN'T BE EMPTY")
         } else {
-            val payload = rootView.deviceNameInput.text.toString() + "," +
+            val deviceId = generateDeviceId()
+            Log.i(LOG_TAG, "DEVICE ID : $deviceId")
+            val payload = deviceId +
+                    rootView.deviceNameInput.text.toString() + "," +
                     rootView.ssidInput.text.toString() + "," +
                     rootView.passwordInput.text.toString() + "," +
                     rootView.contact1Input.text.toString() + "," +
@@ -158,5 +167,10 @@ class RegisterFragment : Fragment() {
 
             publish(payload)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        client.close()
     }
 }
