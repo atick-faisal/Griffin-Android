@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.device_list_item.view.*
 
-class DeviceListAdapter(private val application: Application) :
+class DeviceListAdapter(
+    private val application: Application,
+    private val clickListener: DeviceClickListener
+) :
     ListAdapter<DeviceEntity, DeviceListAdapter.DeviceViewHolder>(MyDiffUtil()){
 
     class DeviceViewHolder private constructor(private val rootView: View) :
@@ -33,9 +36,9 @@ class DeviceListAdapter(private val application: Application) :
             rootView.deviceNameText.text = item.deviceName
             rootView.numSensorsText.text = item.numSensors.toString()
             rootView.numUnlockedText.text = application.resources.getString(
-                R.string.open, item.numSensors?.minus(item.lockedSensors)
+                R.string.open, item.numSensors.minus(item.lockedSensors)
             )
-            rootView.numUnlockedText.text = application.resources.getString(
+            rootView.numLockedText.text = application.resources.getString(
                 R.string.locked, item.lockedSensors
             )
         }
@@ -49,6 +52,9 @@ class DeviceListAdapter(private val application: Application) :
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(application, item)
+        holder.itemView.setOnClickListener {
+            clickListener.onClick(item)
+        }
     }
 }
 
@@ -66,4 +72,8 @@ class MyDiffUtil : DiffUtil.ItemCallback<DeviceEntity>() {
     ): Boolean {
         return oldItem == newItem
     }
+}
+
+class DeviceClickListener(val clickListener: (deviceId: String) -> Unit) {
+    fun onClick(device: DeviceEntity) = clickListener(device.deviceId?: "M")
 }

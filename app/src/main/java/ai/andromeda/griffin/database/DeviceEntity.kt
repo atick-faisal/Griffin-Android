@@ -23,7 +23,7 @@ data class DeviceEntity(
     @ColumnInfo(name = "contact_3")
     val contact3: String = "",
     @ColumnInfo(name = "num_sensors")
-    val numSensors: Int?,
+    val numSensors: Int = 0,
     @ColumnInfo(name = "additional_info")
     val additionalInfo: String = "",
     @ColumnInfo(name = "locked_sensors")

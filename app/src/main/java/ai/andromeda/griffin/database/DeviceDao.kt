@@ -18,6 +18,6 @@ interface DeviceDao {
     @Query("SELECT * FROM `devices`")
     fun getAll(): LiveData<List<DeviceEntity>>
 
-    @Query("SELECT * FROM `devices` WHERE id = :deviceId")
+    @Query("SELECT * FROM `devices` WHERE id = :deviceId LIMIT 1")
     suspend fun get(deviceId: String): DeviceEntity?
 }

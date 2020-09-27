@@ -1,8 +1,10 @@
 package ai.andromeda.griffin.home
 
 import ai.andromeda.griffin.R
+import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +29,10 @@ class HomeFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         deviceDatabase = DeviceDatabase.getInstance(application)
-        deviceListAdapter = DeviceListAdapter(application)
+
+        deviceListAdapter = DeviceListAdapter(application, DeviceClickListener {
+            Log.i(LOG_TAG, "ITEM CLICKED. ID : $it")
+        })
 
         val viewModelFactory = HomeViewModelFactory(
             application = application,
