@@ -1,5 +1,6 @@
 package ai.andromeda.griffin.register
 
+import ai.andromeda.griffin.SharedPreferencesManager
 import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
@@ -21,9 +22,6 @@ import java.lang.StringBuilder
 class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application) :
     AndroidViewModel(application) {
 
-    private val sharedPreferences = application.getSharedPreferences(
-        "SENSORS", Context.MODE_PRIVATE
-    )
     private val database = deviceDatabase.deviceDao
     private val clientId: String = MqttClient.generateClientId()
     private val client = MqttAndroidClient(
@@ -142,20 +140,18 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
     }
 
     private fun writeToSharedPreferences(data: DeviceEntity) {
-        with(sharedPreferences.edit()) {
-            val nameKey = data.deviceId + "/name"
-            val valueKey = data.deviceId + "/value"
-            val names = StringBuilder()
-            val values = StringBuilder()
-            val n = data.numSensors
-            for (i in 0..n) {
-                names.append("SENSOR $i,")
-                values.append("0,")
-            }
-            putString(nameKey, names.toString())
-            putString(valueKey, values.toString())
-            commit()
+        val nameKey = data.deviceId + "/name"
+        val valueKey = data.deviceId + "/value"
+        val names = StringBuilder()
+        val values = StringBuilder()
+
+        val n = data.numSensors
+        for (i in 0 until n) {
+            names.append("SENSOR $i,")
+            values.append("0,")
         }
+        SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
+        SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
     }
 
     override fun onCleared() {

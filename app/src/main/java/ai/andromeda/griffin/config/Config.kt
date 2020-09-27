@@ -8,4 +8,5 @@ object Config {
     const val GLOBAL_BROKER_IP = "tcp://broker.hivemq.com:1883"
     const val ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm"
     const val ID_LENGTH = 8
+    const val PREFERENCE_NAME = "APP_SETTINGS"
 }

@@ -33,7 +33,7 @@
         tools:layout="@layout/fragment_register" />
     <fragment
         android:id="@+id/deviceDetailsFragment"
-        android:name="ai.andromeda.griffin.device.DeviceDetailsFragment"
+        android:name="ai.andromeda.griffin.device.DeviceFragment"
         android:label="fragment_device_details"
         tools:layout="@layout/fragment_device_details" >
         <argument
