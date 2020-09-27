@@ -32,6 +32,7 @@ class HomeFragment : Fragment() {
 
         deviceListAdapter = DeviceListAdapter(application, DeviceClickListener {
             Log.i(LOG_TAG, "ITEM CLICKED. ID : $it")
+            navigateToDetails(it)
         })
 
         val viewModelFactory = HomeViewModelFactory(
@@ -57,6 +58,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToRegister() {
-        findNavController().navigate(R.id.action_homeFragment_to_registerFragment)
+        findNavController().navigate(
+            HomeFragmentDirections.actionHomeFragmentToRegisterFragment()
+        )
+    }
+
+    private fun navigateToDetails(deviceId: String) {
+        findNavController().navigate(
+            HomeFragmentDirections.actionHomeFragmentToDeviceDetailsFragment(
+                deviceId = deviceId
+            )
+        )
     }
 }
