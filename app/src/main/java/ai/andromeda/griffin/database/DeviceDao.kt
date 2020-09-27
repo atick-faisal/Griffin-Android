@@ -1,5 +1,6 @@
 package ai.andromeda.griffin.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Suppress("UNUSED")
@@ -15,7 +16,7 @@ interface DeviceDao {
     suspend fun delete(entity: DeviceEntity)
 
     @Query("SELECT * FROM `devices`")
-    suspend fun getAll(): List<DeviceEntity>
+    fun getAll(): LiveData<List<DeviceEntity>>
 
     @Query("SELECT * FROM `devices` WHERE id = :deviceId")
     suspend fun get(deviceId: String): DeviceEntity?

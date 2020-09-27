@@ -19,4 +19,6 @@
     <string name="number_of_sensors">Number of Sensors</string>
     <string name="register">Register</string>
     <string name="additional_information">Additional Information (Optional)</string>
+    <string name="open">%d OPEN</string>
+    <string name="locked">%d LOCKED</string>
 </resources>
