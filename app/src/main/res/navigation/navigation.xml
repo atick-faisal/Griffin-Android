@@ -35,7 +35,7 @@
         android:id="@+id/deviceDetailsFragment"
         android:name="ai.andromeda.griffin.device.DeviceFragment"
         android:label="fragment_device_details"
-        tools:layout="@layout/fragment_device_details" >
+        tools:layout="@layout/fragment_device" >
         <argument
             android:name="deviceId"
             app:argType="string"

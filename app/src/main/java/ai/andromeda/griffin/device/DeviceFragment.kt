@@ -7,22 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
-import ai.andromeda.griffin.database.DeviceDatabase
 import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
+import kotlinx.android.synthetic.main.fragment_device.view.*
 
 class DeviceFragment : Fragment() {
 
     private lateinit var deviceViewModel: DeviceViewModel
+    private lateinit var sensorAdapter: SensorAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(
-            R.layout.fragment_device_details,
+            R.layout.fragment_device,
             container,
             false
         )
@@ -30,6 +31,12 @@ class DeviceFragment : Fragment() {
         val deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId
 
         val application = requireNotNull(this.activity).application
+        sensorAdapter = SensorAdapter(application, SensorClickListener {
+
+        })
+
+        rootView.sensorList.adapter = sensorAdapter
+        rootView.sensorList.layoutManager = GridLayoutManager(activity, 2)
 
         val deviceViewModelFactory = DeviceViewModelFactory(
             application,
@@ -42,6 +49,10 @@ class DeviceFragment : Fragment() {
             it?.let {
                 Log.i(LOG_TAG, "SENSOR SIZE : ${it.size}")
             }
+        })
+
+        deviceViewModel.sensorList.observe(viewLifecycleOwner, Observer {
+            sensorAdapter.submitList(it)
         })
 
         return rootView

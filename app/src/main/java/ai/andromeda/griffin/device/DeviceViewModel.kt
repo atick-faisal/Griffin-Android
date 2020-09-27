@@ -1,8 +1,8 @@
 package ai.andromeda.griffin.device
 
-import ai.andromeda.griffin.SharedPreferencesManager
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.SensorModel
+import ai.andromeda.griffin.util.SharedPreferencesManager
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel

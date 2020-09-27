@@ -1,11 +1,11 @@
 package ai.andromeda.griffin.register
 
-import ai.andromeda.griffin.SharedPreferencesManager
 import ai.andromeda.griffin.config.Config
+import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
+import ai.andromeda.griffin.util.SharedPreferencesManager
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.io.UnsupportedEncodingException
-import java.lang.StringBuilder
 
 class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application) :
     AndroidViewModel(application) {
@@ -47,7 +46,7 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
                 token.actionCallback = object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken) {
                         showMessage("MQTT CONNECTED!")
-                        Log.i(Config.LOG_TAG, "MQTT CONNECTED!")
+                        Log.i(LOG_TAG, "MQTT CONNECTED!")
                         onConnectionSuccessful()
                         subscribe(Config.SUBSCRIPTION_TOPIC)
                         subscribe("NEW_TOPIC")
@@ -58,7 +57,7 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
                         exception: Throwable
                     ) {
                         showMessage("CANNOT CONNECT!")
-                        Log.i(Config.LOG_TAG, "CANNOT CONNECT!")
+                        Log.i(LOG_TAG, "CANNOT CONNECT!")
                     }
                 }
                 ////////////////////////////////////////////////////////////
@@ -67,12 +66,12 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
                         topic: String?,
                         message: MqttMessage?
                     ) {
-                        Log.i(Config.LOG_TAG, "MESSAGE : " + message.toString())
+                        Log.i(LOG_TAG, "MESSAGE : " + message.toString())
                         showMessage(message.toString())
                     }
 
                     override fun connectionLost(cause: Throwable?) {
-                        Log.i(Config.LOG_TAG, "CONNECTION LOST")
+                        Log.i(LOG_TAG, "CONNECTION LOST")
                         showMessage("CONNECTION LOST")
                     }
 
@@ -81,7 +80,7 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
             }
         } catch (e: MqttException) {
             showMessage("ERROR WHILE CONNECTING")
-            Log.i(Config.LOG_TAG, "ERROR WHILE CONNECTING")
+            Log.i(LOG_TAG, "ERROR WHILE CONNECTING")
         }
     }
 
@@ -90,7 +89,7 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
             val subToken = client.subscribe(topic, 1)
             subToken.actionCallback = object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken) {
-                    Log.i(Config.LOG_TAG, "SUBSCRIBED TO : $topic")
+                    Log.i(LOG_TAG, "SUBSCRIBED TO : $topic")
                     showMessage("SUBSCRIBED TO : $topic")
                 }
 
@@ -98,7 +97,7 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
                     asyncActionToken: IMqttToken,
                     exception: Throwable
                 ) {
-                    Log.i(Config.LOG_TAG, "COULD NOT SUBSCRIBE")
+                    Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
                     showMessage("COULD NOT SUBSCRIBE")
                 }
             }
@@ -157,5 +156,6 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
     override fun onCleared() {
         super.onCleared()
         client.close()
+        Log.i(LOG_TAG, "CLIENT CLEARED")
     }
 }

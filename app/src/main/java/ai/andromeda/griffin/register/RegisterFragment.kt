@@ -4,7 +4,7 @@ import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
-import ai.andromeda.griffin.generateDeviceId
+import ai.andromeda.griffin.util.generateDeviceId
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
