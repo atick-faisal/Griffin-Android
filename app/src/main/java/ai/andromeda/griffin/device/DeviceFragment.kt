@@ -31,12 +31,6 @@ class DeviceFragment : Fragment() {
         val deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId
 
         val application = requireNotNull(this.activity).application
-        sensorAdapter = SensorAdapter(application, SensorClickListener {
-
-        })
-
-        rootView.sensorList.adapter = sensorAdapter
-        rootView.sensorList.layoutManager = GridLayoutManager(activity, 2)
 
         val deviceViewModelFactory = DeviceViewModelFactory(
             application,
@@ -45,15 +39,21 @@ class DeviceFragment : Fragment() {
         deviceViewModel = ViewModelProvider(this, deviceViewModelFactory)
             .get(DeviceViewModel::class.java)
 
+
         deviceViewModel.sensorList.observe(viewLifecycleOwner, Observer {
             it?.let {
                 Log.i(LOG_TAG, "SENSOR SIZE : ${it.size}")
+                sensorAdapter.sensorList = it
             }
         })
 
-        deviceViewModel.sensorList.observe(viewLifecycleOwner, Observer {
-            sensorAdapter.submitList(it)
-        })
+        sensorAdapter = SensorAdapter { position ->
+            Log.i(LOG_TAG, "CLICK AT : $position")
+            deviceViewModel.toggleStatusAt(position)
+        }
+
+        rootView.sensorList.adapter = sensorAdapter
+        rootView.sensorList.layoutManager = GridLayoutManager(activity, 2)
 
         return rootView
     }

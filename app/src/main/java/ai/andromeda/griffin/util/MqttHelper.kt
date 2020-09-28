@@ -2,8 +2,9 @@ package ai.andromeda.griffin.util
 
 import ai.andromeda.griffin.config.Config
 import android.app.Application
+import android.util.Log
 import org.eclipse.paho.android.service.MqttAndroidClient
-import org.eclipse.paho.client.mqttv3.MqttClient
+import org.eclipse.paho.client.mqttv3.*
 
 object MqttHelper {
     private val clientId: String = MqttClient.generateClientId()

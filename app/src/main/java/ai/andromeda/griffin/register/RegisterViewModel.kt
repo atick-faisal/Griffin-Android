@@ -147,7 +147,7 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
         val n = data.numSensors
         for (i in 0 until n) {
             names.append("SENSOR $i,")
-            values.append("0,")
+            values.append("1,")
         }
         SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())

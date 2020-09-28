@@ -14,6 +14,7 @@ class DeviceViewModel(
     val deviceId: String?
 ) : AndroidViewModel(application) {
 
+    private val sensors: MutableList<SensorModel> = mutableListOf()
     private val _sensorList = MutableLiveData<List<SensorModel>>()
     val sensorList: LiveData<List<SensorModel>>
         get() = _sensorList
@@ -28,11 +29,8 @@ class DeviceViewModel(
             .getString(getApplication(), "$deviceId/name")
 
 
-
         val values = SharedPreferencesManager
             .getString(getApplication(), "$deviceId/value")
-
-        val sensors: MutableList<SensorModel> = mutableListOf()
 
         if (names != null && values != null) {
             val nameArray = names.split(",")
@@ -48,6 +46,21 @@ class DeviceViewModel(
             }
         }
         Log.i(LOG_TAG, "SIZE : ${sensors.size}")
+
         return sensors
+    }
+
+    fun toggleStatusAt(position: Int) {
+        val newSensors: List<SensorModel>
+        newSensors = sensors
+
+        when (sensors[position].sensorStatus) {
+            0 -> newSensors[position].sensorStatus = 1
+            1 -> newSensors[position].sensorStatus = 0
+        }
+
+        Log.i(LOG_TAG, "SENSORS : ${sensors[position].sensorStatus}")
+
+        _sensorList.value = newSensors
     }
 }
