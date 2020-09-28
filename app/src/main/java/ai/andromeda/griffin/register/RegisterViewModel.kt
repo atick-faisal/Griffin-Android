@@ -49,7 +49,6 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
                         Log.i(LOG_TAG, "MQTT CONNECTED!")
                         onConnectionSuccessful()
                         subscribe(Config.SUBSCRIPTION_TOPIC)
-                        subscribe("NEW_TOPIC")
                     }
 
                     override fun onFailure(
@@ -147,7 +146,7 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
         val n = data.numSensors
         for (i in 0 until n) {
             names.append("SENSOR $i,")
-            values.append("1,")
+            values.append("0,")
         }
         SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())

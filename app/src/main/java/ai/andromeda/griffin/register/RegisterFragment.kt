@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.fragment_register.view.*
+import org.json.JSONException
+import org.json.JSONObject
 
 @Suppress("SameParameterValue")
 class RegisterFragment : Fragment() {
@@ -99,17 +101,32 @@ class RegisterFragment : Fragment() {
                 additionalInfo = additionalInfo
             )
 
-            val payload = deviceId +
-                    deviceName + "," +
-                    ssid + "," +
-                    password + "," +
-                    contact1 + "," +
-                    contact2 + "," +
-                    contact3 + "," +
-                    numSensors + "," +
-                    additionalInfo
+            val payload = JSONObject()
+            try {
+                payload.put("Device_ID", deviceId)
+                payload.put("Count", 0)
+                payload.put("Command", "Configuration")
+                payload.put("AP_SSID", ssid)
+                payload.put("AP_Password", password)
+                payload.put("Number_of_Sensors", numSensors.toInt())
+                payload.put("Number_of_Contacts", 3)
+                payload.put("Contacts", listOf(contact1, contact2, contact3))
+                payload.put("Message", additionalInfo)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
 
-            registerViewModel.publish(payload)
+//            val payload = deviceId +
+//                    deviceName + "," +
+//                    ssid + "," +
+//                    password + "," +
+//                    contact1 + "," +
+//                    contact2 + "," +
+//                    contact3 + "," +
+//                    numSensors + "," +
+//                    additionalInfo
+
+            registerViewModel.publish(payload.toString())
             registerViewModel.saveData(data)
         }
     }
