@@ -3,11 +3,13 @@ package ai.andromeda.griffin.home
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
+import ai.andromeda.griffin.database.DeviceEntity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -56,6 +58,10 @@ class HomeFragment : Fragment() {
         rootView.fab.setOnClickListener { navigateToRegister() }
         rootView.deviceList.layoutManager = GridLayoutManager(activity, 2)
 
+        setHasOptionsMenu(true)
+        (context as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.dashboard)
+
         return rootView
     }
 
@@ -65,11 +71,13 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private fun navigateToDetails(deviceId: String) {
+    private fun navigateToDetails(device: DeviceEntity) {
         findNavController().navigate(
             HomeFragmentDirections.actionHomeFragmentToDeviceDetailsFragment(
-                deviceId = deviceId
+                deviceId = device.deviceId,
+                deviceName = device.deviceName
             )
         )
+
     }
 }

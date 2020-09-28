@@ -2,14 +2,16 @@ package ai.andromeda.griffin.device
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import android.util.Log
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_device.view.*
 
@@ -17,6 +19,8 @@ class DeviceFragment : Fragment() {
 
     private lateinit var deviceViewModel: DeviceViewModel
     private lateinit var sensorAdapter: SensorAdapter
+    private var deviceId: String? = null
+    private var deviceName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,7 +32,9 @@ class DeviceFragment : Fragment() {
             false
         )
 
-        val deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId
+        deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId
+        deviceName = DeviceFragmentArgs.fromBundle(requireArguments())
+            .deviceName ?: getString(R.string.unknown_device)
 
         val application = requireNotNull(this.activity).application
 
@@ -55,6 +61,31 @@ class DeviceFragment : Fragment() {
         rootView.sensorList.adapter = sensorAdapter
         rootView.sensorList.layoutManager = GridLayoutManager(activity, 2)
 
+        setHasOptionsMenu(true)
+        (context as AppCompatActivity).supportActionBar?.title = deviceName
+
         return rootView
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.device_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.shareDevice -> {
+                findNavController().navigate(
+                    DeviceFragmentDirections.actionDeviceDetailsFragmentToShareFragment(
+                        deviceId = deviceId,
+                        deviceName = deviceName
+                    )
+                )
+                true
+            }
+            else -> false
+        }
+//        return NavigationUI.
+//        onNavDestinationSelected(item,requireView().findNavController())
+//                || super.onOptionsItemSelected(item)
     }
 }

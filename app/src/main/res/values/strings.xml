@@ -21,4 +21,10 @@
     <string name="additional_information">Additional Information (Optional)</string>
     <string name="open">%d OPEN</string>
     <string name="locked">%d LOCKED</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="unknown_device">Unknown Device</string>
+    <string name="share">Share</string>
+    <string name="share_you_device">Share You Device</string>
+    <string name="instructions_text">Open Scan option from Home screen and point your camera at this QR code to add this device to your phone</string>
+    <string name="qr_code">QR Code</string>
 </resources>

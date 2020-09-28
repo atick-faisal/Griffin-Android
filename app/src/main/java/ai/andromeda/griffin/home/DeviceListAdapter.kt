@@ -74,6 +74,6 @@ class MyDiffUtil : DiffUtil.ItemCallback<DeviceEntity>() {
     }
 }
 
-class DeviceClickListener(val clickListener: (deviceId: String) -> Unit) {
-    fun onClick(device: DeviceEntity) = clickListener(device.deviceId?: "M")
+class DeviceClickListener(val clickListener: (device: DeviceEntity) -> Unit) {
+    fun onClick(device: DeviceEntity) = clickListener(device)
 }

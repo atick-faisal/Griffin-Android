@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".share.ShareFragment">
+
+    <TextView
+        android:id="@+id/deviceNameText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:text="@string/unknown_device"
+        android:textColor="#424242"
+        android:textAlignment="center"
+        android:layout_marginTop="32dp"/>
+
+    <ImageView
+        android:contentDescription="@string/qr_code"
+        android:id="@+id/qrCodeImage"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_below="@id/deviceNameText"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/card_white"
+        android:elevation="4dp"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/instructionsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_below="@id/qrCodeImage"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="@string/instructions_text"
+        android:fontFamily="@font/roboto_light"
+        android:textAlignment="center"
+        android:layout_marginTop="32dp"/>
+
+</RelativeLayout>
