@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.sensor_list_item.view.*
 
-class SensorAdapter(private val clickListener: (position: Int) -> Unit) :
+class SensorAdapter(private val clickListener: (view: Int, position: Int) -> Unit) :
     RecyclerView.Adapter<SensorAdapter.SensorViewHolder>() {
 
     var sensorList = listOf<SensorModel>()
@@ -54,8 +54,11 @@ class SensorAdapter(private val clickListener: (position: Int) -> Unit) :
     override fun onBindViewHolder(holder: SensorViewHolder, position: Int) {
         val item = sensorList[position]
         holder.bind(item)
-        holder.itemView.setOnClickListener {
-            clickListener(position)
+        holder.itemView.sensorStatusImage.setOnClickListener {
+            clickListener(0, position)
+        }
+        holder.itemView.nameEditButton.setOnClickListener {
+            clickListener(1, position)
         }
     }
 

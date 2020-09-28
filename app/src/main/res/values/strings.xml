@@ -27,4 +27,6 @@
     <string name="share_you_device">Share You Device</string>
     <string name="instructions_text">Open Scan option from Home screen and point your camera at this QR code to add this device to your phone</string>
     <string name="qr_code">QR Code</string>
+    <string name="edit_name">Edit Name</string>
+    <string name="save">Save</string>
 </resources>

@@ -1,23 +1,22 @@
 package ai.andromeda.griffin.device
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
+import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_device.view.*
 
 class DeviceFragment : Fragment() {
 
     private lateinit var deviceViewModel: DeviceViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var sensorAdapter: SensorAdapter
     private var deviceId: String? = null
     private var deviceName: String? = null
@@ -40,22 +39,35 @@ class DeviceFragment : Fragment() {
 
         val deviceViewModelFactory = DeviceViewModelFactory(
             application,
-            deviceId
+            deviceId!!
         )
         deviceViewModel = ViewModelProvider(this, deviceViewModelFactory)
             .get(DeviceViewModel::class.java)
 
+        val sharedViewModelFactory = SharedViewModelFactory(application)
+
+        sharedViewModel = ViewModelProvider(requireActivity(), sharedViewModelFactory)
+            .get(SharedViewModel::class.java)
 
         deviceViewModel.sensorList.observe(viewLifecycleOwner, Observer {
             it?.let {
-                Log.i(LOG_TAG, "SENSOR SIZE : ${it.size}")
                 sensorAdapter.sensorList = it
             }
         })
 
-        sensorAdapter = SensorAdapter { position ->
+        sharedViewModel.sensorList.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                sensorAdapter.sensorList = it
+                sharedViewModel.doneUpdating()
+            }
+        })
+
+        sensorAdapter = SensorAdapter { view, position ->
             Log.i(LOG_TAG, "CLICK AT : $position")
-            deviceViewModel.toggleStatusAt(position)
+            when (view) {
+                0 -> deviceViewModel.toggleStatusAt(position)
+                1 -> navigateToEdit(position)
+            }
         }
 
         rootView.sensorList.adapter = sensorAdapter
@@ -65,6 +77,15 @@ class DeviceFragment : Fragment() {
         (context as AppCompatActivity).supportActionBar?.title = deviceName
 
         return rootView
+    }
+
+    private fun navigateToEdit(position: Int) {
+        findNavController().navigate(
+            DeviceFragmentDirections.actionDeviceDetailsFragmentToEditNameFragment(
+                position = position,
+                deviceId = deviceId
+            )
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

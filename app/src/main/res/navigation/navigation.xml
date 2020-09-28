@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_deviceDetailsFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
+        <action
+            android:id="@+id/action_deviceDetailsFragment_to_editNameFragment"
+            app:destination="@id/editNameFragment" />
     </fragment>
     <fragment
         android:id="@+id/shareFragment"
@@ -67,4 +70,22 @@
             app:nullable="true"
             android:defaultValue="null" />
     </fragment>
+    <dialog
+        android:id="@+id/editNameFragment"
+        android:name="ai.andromeda.griffin.device.EditNameFragment"
+        android:label="fragment_edit_name"
+        tools:layout="@layout/fragment_edit_name" >
+        <action
+            android:id="@+id/action_editNameFragment_to_deviceDetailsFragment"
+            app:destination="@id/deviceDetailsFragment" />
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="deviceId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="null" />
+    </dialog>
 </navigation>

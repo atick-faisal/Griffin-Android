@@ -4,6 +4,7 @@ import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
 import ai.andromeda.griffin.database.SensorModel
+import ai.andromeda.griffin.util.MqttHelper
 import ai.andromeda.griffin.util.SharedPreferencesManager
 import android.app.Application
 import android.util.Log
@@ -20,15 +21,17 @@ import kotlin.properties.Delegates
 
 class DeviceViewModel(
     application: Application,
-    val deviceId: String?
+    val deviceId: String
 ) : AndroidViewModel(application) {
 
-    private val clientId: String = MqttClient.generateClientId()
-    private val client = MqttAndroidClient(
-        application,
-        Config.LOCAL_BROKER_IP,
-        clientId
-    )
+    private val client = MqttHelper.getInstance(application)
+
+//    private val clientId: String = MqttClient.generateClientId()
+//    private val client = MqttAndroidClient(
+//        application,
+//        Config.LOCAL_BROKER_IP,
+//        clientId
+//    )
     private val sensors: MutableList<SensorModel> = mutableListOf()
     private val _sensorList = MutableLiveData<List<SensorModel>>()
     val sensorList: LiveData<List<SensorModel>>
@@ -85,6 +88,11 @@ class DeviceViewModel(
         publish()
         writeToSharedPreferences()
         _sensorList.value = sensors
+    }
+
+    fun changeSensorName(position: Int, name: String) {
+        sensors[position].sensorName = name
+        writeToSharedPreferences()
     }
 
     private fun connectToBroker() {
@@ -154,7 +162,7 @@ class DeviceViewModel(
         }
     }
 
-    fun publish() {
+    private fun publish() {
         val payload = getPayload()
         try {
             val encodedPayload = payload.toByteArray(charset("UTF-8"))
@@ -213,6 +221,6 @@ class DeviceViewModel(
     override fun onCleared() {
         super.onCleared()
         client.close()
-        Log.i(LOG_TAG, "CLIENT CLEARED")
+        Log.i(LOG_TAG, "DEVICE VIEWMODEL CLEARED")
     }
 }

@@ -10,19 +10,25 @@
 
     <TextView
         android:id="@+id/sensorNameText"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
         android:textColor="#212121"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:text="SENSOR 1"/>
+
+    <ImageView
+        android:id="@+id/nameEditButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_more_vert"
+        android:layout_alignParentEnd="true"/>
 
     <ImageView
         android:id="@+id/sensorStatusImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/red_circle"
-        android:layout_below="@+id/sensorNameText"
+        android:layout_below="@+id/nameEditButton"
         android:layout_margin="8dp"/>
 
 </RelativeLayout>
