@@ -29,4 +29,9 @@
     <string name="qr_code">QR Code</string>
     <string name="edit_name">Edit Name</string>
     <string name="save">Save</string>
+    <string name="scan">Scan</string>
+    <string name="qr_scanner">QR Scanner</string>
+    <string name="scanning">Scanning...</string>
+    <string name="add_device">Add Device</string>
+    <string name="try_again">Try Again</string>
 </resources>

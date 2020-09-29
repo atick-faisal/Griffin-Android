@@ -4,16 +4,17 @@ import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
+import ai.andromeda.griffin.device.DeviceFragmentDirections
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
@@ -78,6 +79,17 @@ class HomeFragment : Fragment() {
                 deviceName = device.deviceName
             )
         )
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.dashboard_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return NavigationUI
+            .onNavDestinationSelected(
+                item, requireView()
+                    .findNavController()
+            ) || super.onOptionsItemSelected(item)
     }
 }

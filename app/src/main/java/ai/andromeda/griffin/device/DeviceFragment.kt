@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_device.view.*
 
@@ -103,10 +105,9 @@ class DeviceFragment : Fragment() {
                 )
                 true
             }
-            else -> false
+            else -> NavigationUI
+                .onNavDestinationSelected(item,requireView()
+                .findNavController()) || super.onOptionsItemSelected(item)
         }
-//        return NavigationUI.
-//        onNavDestinationSelected(item,requireView().findNavController())
-//                || super.onOptionsItemSelected(item)
     }
 }
