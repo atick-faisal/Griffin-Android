@@ -138,8 +138,10 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
     }
 
     private fun writeToSharedPreferences(data: DeviceEntity) {
-        val nameKey = data.deviceId + "/name"
-        val valueKey = data.deviceId + "/value"
+        val deviceId = data.deviceId
+        val deviceName = data.deviceName
+        val nameKey = "$deviceId/name"
+        val valueKey = "$deviceId/value"
         val names = StringBuilder()
         val values = StringBuilder()
 
@@ -150,6 +152,13 @@ class RegisterViewModel(deviceDatabase: DeviceDatabase, application: Application
         }
         SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
+
+        // Saving Device Name to Show in Future Alert Notifications
+        deviceId?.let {
+            SharedPreferencesManager.putString(
+                getApplication(), deviceId, deviceName.toString()
+            )
+        }
     }
 
     override fun onCleared() {

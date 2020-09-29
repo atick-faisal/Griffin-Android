@@ -16,11 +16,11 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(topAppBar)
 
-        //startMqttService()
+        startMqttService()
     }
 
     private fun startMqttService() {
-        Log.i(LOG_TAG, "SERVICE STARTING...")
+        Log.i(LOG_TAG, null.toString())
         val intent = Intent(
             this@MainActivity, MqttConnectionManagerService::class.java
         )

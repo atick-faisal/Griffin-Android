@@ -9,9 +9,9 @@ object Config {
     const val ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm"
     const val ID_LENGTH = 8
     const val PREFERENCE_NAME = "APP_SETTINGS"
-    const val PERSISTENT_NOTIFICATION_TITLE = "MQTT Service Running"
+    const val PERSISTENT_NOTIFICATION_TITLE = "Griffin Service"
     const val PERSISTENT_NOTIFICATION_ID = 10010
-    const val ALERT_NOTIFICATION_TITLE = "Something bad happened"
+    const val ALERT_NOTIFICATION_TITLE = "Security Alert!"
     const val ALERT_NOTIFICATION_ID = 191919
     const val CHANNEL_ID = "MQTT_SERVICE_ID"
     const val WORK_NAME = "GRIFFIN_MQTT_SERVICE_WORK"

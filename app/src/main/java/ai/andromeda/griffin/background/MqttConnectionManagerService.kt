@@ -24,6 +24,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
@@ -47,6 +48,7 @@ class MqttConnectionManagerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         this.connect(client)
+        showPersistentNotification("Warning: All Devices are OFFLINE!")
         return START_STICKY
     }
 
@@ -68,7 +70,7 @@ class MqttConnectionManagerService : Service() {
                     override fun onSuccess(asyncActionToken: IMqttToken) {
                         showMessage("MQTT CONNECTED!")
                         Log.i(LOG_TAG, "MQTT CONNECTED!")
-                        showPersistentNotification("MQTT Service is Running")
+                        showPersistentNotification("All Devices are ONLINE")
                         subscribe(SUBSCRIPTION_TOPIC)
                     }
 
@@ -78,7 +80,7 @@ class MqttConnectionManagerService : Service() {
                     ) {
                         showMessage("CANNOT CONNECT!")
                         Log.i(LOG_TAG, "CANNOT CONNECT!")
-                        stopService()
+                        // stopService()
                     }
                 }
                 ////////////////////////////////////////////////////////////
@@ -96,9 +98,10 @@ class MqttConnectionManagerService : Service() {
                     }
 
                     override fun connectionLost(cause: Throwable?) {
+                        showPersistentNotification("Warning: All Devices are OFFLINE!")
                         Log.i(LOG_TAG, "CONNECTION LOST")
                         showMessage("CONNECTION LOST")
-                        stopService()
+                        // stopService()
                     }
 
                     override fun deliveryComplete(token: IMqttDeliveryToken?) { }
@@ -107,7 +110,7 @@ class MqttConnectionManagerService : Service() {
         } catch (e: MqttException) {
             showMessage("ERROR WHILE CONNECTING")
             Log.i(LOG_TAG, "ERROR WHILE CONNECTING")
-            stopService()
+            // stopService()
         }
     }
 
@@ -124,9 +127,10 @@ class MqttConnectionManagerService : Service() {
                     asyncActionToken: IMqttToken,
                     exception: Throwable
                 ) {
+                    showPersistentNotification("Warning: All Devices are OFFLINE!")
                     Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
                     showMessage("COULD NOT SUBSCRIBE")
-                    stopService()
+                    // stopService()
                 }
             }
         } catch (e: MqttException) {
@@ -209,11 +213,16 @@ class MqttConnectionManagerService : Service() {
             val sensors = json.getString("Sensors")
             val sensorValues = toArray(sensors)
             sensorValues?.let {
-                if (sensorValues.sum() > 0) {
-                    showAlertNotification(getString(R.string.sensor_breach))
-                }
                 writeToSharedPreferences(sensorValues, deviceId)
                 updateDatabase(sensorValues, deviceId)
+                if (sensorValues.sum() > 0) {
+                    val deviceName = SharedPreferencesManager.getString(
+                        applicationContext, deviceId
+                    )
+                    showAlertNotification(
+                        getString(R.string.sensor_breach, deviceName.toString())
+                    )
+                }
             }
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -224,8 +233,8 @@ class MqttConnectionManagerService : Service() {
         return arrayParser.fromJson(json, IntArray::class.java)
     }
 
-    private fun stopService() {
-        stopForeground(true)
-        stopSelf()
-    }
+//    private fun stopService() {
+//        stopForeground(true)
+//        stopSelf()
+//    }
 }
