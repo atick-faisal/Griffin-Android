@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -31,7 +32,6 @@ import com.google.mlkit.vision.common.InputImage
 import kotlinx.android.synthetic.main.fragment_scanner.view.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
 typealias QrListener = (result: String?) -> Unit
 
 class ScannerFragment : Fragment() {
@@ -77,6 +77,9 @@ class ScannerFragment : Fragment() {
 
         rootView.addDeviceButton.setOnClickListener {
             scannerViewModel.saveData()
+            findNavController().navigate(
+                ScannerFragmentDirections.actionScannerFragmentToHomeFragment()
+            )
         }
 
         rootView.tryAgainButton.setOnClickListener {

@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_register.view.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -42,7 +43,10 @@ class RegisterFragment : Fragment() {
         rootView.connectionRetryButton.setOnClickListener {
             registerViewModel.connectToBroker()
         }
-        rootView.registerButton.setOnClickListener { registerDevice() }
+        rootView.registerButton.setOnClickListener {
+            registerDevice()
+            navigateToHome()
+        }
 
         registerViewModel.connectionSuccessful.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -116,18 +120,14 @@ class RegisterFragment : Fragment() {
                 e.printStackTrace()
             }
 
-//            val payload = deviceId +
-//                    deviceName + "," +
-//                    ssid + "," +
-//                    password + "," +
-//                    contact1 + "," +
-//                    contact2 + "," +
-//                    contact3 + "," +
-//                    numSensors + "," +
-//                    additionalInfo
-
             registerViewModel.publish(payload.toString())
             registerViewModel.saveData(data)
         }
+    }
+
+    private fun navigateToHome() {
+        findNavController().navigate(
+            RegisterFragmentDirections.actionRegisterFragmentToHomeFragment()
+        )
     }
 }

@@ -64,12 +64,16 @@ class DeviceViewModel(
             numberOfSensors = nameArray.size - 1
 
             for (i in 0 until numberOfSensors) {
-                sensors.add(
-                    SensorModel(
-                        sensorName = nameArray[i],
-                        sensorStatus = valueArray[i].toInt()
+                try {
+                    sensors.add(
+                        SensorModel(
+                            sensorName = nameArray[i],
+                            sensorStatus = valueArray[i].toInt()
+                        )
                     )
-                )
+                } catch (e: Exception) {
+                    Log.i(LOG_TAG, "INTEGER PARSING ERROR : $valueArray")
+                }
             }
         }
         Log.i(LOG_TAG, "SIZE : ${sensors.size}")

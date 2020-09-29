@@ -27,5 +27,5 @@ data class DeviceEntity(
     @ColumnInfo(name = "additional_info")
     val additionalInfo: String = "",
     @ColumnInfo(name = "locked_sensors")
-    val lockedSensors: Int = 0
+    var lockedSensors: Int = 0
 )

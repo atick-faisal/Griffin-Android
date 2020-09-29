@@ -13,6 +13,7 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -32,6 +33,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
+        <service android:name=".background.MqttConnectionManagerService"/>
     </application>
 
 </manifest>

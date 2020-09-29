@@ -81,6 +81,12 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     implementation "androidx.camera:camera-view:1.0.0-alpha15"
 
+    // WorkManager
+    implementation "android.arch.work:work-runtime-ktx:$work_version"
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.6'
+
     // Annotation processor
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 }

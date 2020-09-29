@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="andromeda">
     <words>
+      <w>gson</w>
       <w>mqtt</w>
       <w>paho</w>
       <w>ssid</w>

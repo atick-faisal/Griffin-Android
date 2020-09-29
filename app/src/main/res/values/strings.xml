@@ -34,4 +34,6 @@
     <string name="scanning">Scanning...</string>
     <string name="add_device">Add Device</string>
     <string name="try_again">Try Again</string>
+    <string name="done">Done</string>
+    <string name="sensor_breach">A SENSOR BREACH HAS OCCURRED</string>
 </resources>

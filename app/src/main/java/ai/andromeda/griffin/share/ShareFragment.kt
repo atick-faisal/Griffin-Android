@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_share.view.*
 
 class ShareFragment : Fragment() {
@@ -56,6 +57,10 @@ class ShareFragment : Fragment() {
             }
         })
 
+        rootView.doneSharingButton.setOnClickListener {
+            navigateToDevice()
+        }
+
         setHasOptionsMenu(true)
         (context as AppCompatActivity).supportActionBar?.title =
             getString(R.string.share)
@@ -63,5 +68,11 @@ class ShareFragment : Fragment() {
         rootView.deviceNameText.text = deviceName
 
         return rootView
+    }
+
+    private fun navigateToDevice() {
+        findNavController().navigate(
+            ShareFragmentDirections.actionShareFragmentToDeviceDetailsFragment()
+        )
     }
 }
