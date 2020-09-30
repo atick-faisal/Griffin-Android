@@ -5,13 +5,58 @@
     android:layout_height="match_parent"
     tools:context=".device.DeviceFragment">
 
+    <RelativeLayout
+        android:id="@+id/editDialog"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/card_white"
+        android:elevation="16dp"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/editNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_name"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/nameTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editNameText"
+            android:layout_marginTop="8dp"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nameTextInput"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/saveNameButton"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/saveNameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nameTextInput"
+            android:layout_alignParentEnd="true"
+            android:text="@string/save" />
+
+    </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sensorList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp"
         android:paddingTop="8dp"
-        tools:listitem="@layout/sensor_list_item"/>
+        android:paddingRight="4dp"
+        tools:listitem="@layout/sensor_list_item" />
 
 </RelativeLayout>

@@ -20,14 +20,11 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 class HomeViewModel(deviceDatabase: DeviceDatabase, application: Application) :
     AndroidViewModel(application) {
 
-    private val client = MqttHelper.getInstance(application)
-
     val database = deviceDatabase.deviceDao
     val deviceList = database.getAll()
 
     override fun onCleared() {
         super.onCleared()
-        Log.i(LOG_TAG, "CLIENT CLEARED")
-        client.close()
+        Log.i(LOG_TAG, "HOME_VM: HOME VIEW MODEL CLEARED")
     }
 }

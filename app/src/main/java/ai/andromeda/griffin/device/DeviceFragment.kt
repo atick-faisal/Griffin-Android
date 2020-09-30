@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -24,8 +25,10 @@ class DeviceFragment : Fragment() {
     private lateinit var mqttService: MqttConnectionManagerService
     private lateinit var deviceViewModel: DeviceViewModel
     private lateinit var sensorAdapter: SensorAdapter
+    private lateinit var rootView: View
     private var deviceId: String? = null
     private var deviceName: String? = null
+    private var currentPosition = 0
 
     //------------------- SERVICE BINDING CALLBACK ------------------//
     private val connection = object : ServiceConnection {
@@ -47,10 +50,10 @@ class DeviceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_device, container, false)
+        rootView = inflater.inflate(R.layout.fragment_device, container, false)
         val application = requireNotNull(this.activity).application
 
-        //------------------ ARGUMENTS -------------------//
+        //-------------------- ARGUMENTS -------------------//
         deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId
         deviceName = DeviceFragmentArgs.fromBundle(requireArguments())
             .deviceName ?: getString(R.string.unknown_device)
@@ -75,11 +78,18 @@ class DeviceFragment : Fragment() {
                 // CLICKED ON THE IMAGE BUTTON
                 0 -> deviceViewModel.toggleStatusAt(position)
                 // CLICKED ON EDIT
-                1 -> navigateToEdit(position)
+                1 -> {
+                    currentPosition = position
+                    showEditDialog()
+                }
             }
         }
         rootView.sensorList.adapter = sensorAdapter
         rootView.sensorList.layoutManager = GridLayoutManager(activity, 2)
+
+        //----------------- CLICK LISTENERS ------------------//
+        rootView.saveNameButton.setOnClickListener { onSaveButtonClick() }
+        rootView.cancelButton.setOnClickListener { onCancelButtonClick() }
 
         //-------------------- MENU ------------------//
         setHasOptionsMenu(true)
@@ -91,6 +101,7 @@ class DeviceFragment : Fragment() {
     //----------------------- ON_START() ------------------//
     override fun onStart() {
         super.onStart()
+        Log.i(LOG_TAG, "DEVICE_F: ON START")
         activity?.let {
             Intent(activity, MqttConnectionManagerService::class.java).also { intent ->
                 activity?.bindService(intent, connection, Context.BIND_AUTO_CREATE)
@@ -98,13 +109,50 @@ class DeviceFragment : Fragment() {
         }
     }
 
-    //----------------- NAVIGATE TO EDIT FRAGMENT -----------------//
-    private fun navigateToEdit(position: Int) {
-        findNavController().navigate(
-            DeviceFragmentDirections.actionDeviceDetailsFragmentToEditNameFragment(
-                position = position, deviceId = deviceId
-            )
-        )
+    //----------------- SAVE BUTTON CLICK --------------//
+    private fun onSaveButtonClick() {
+        val name = rootView.nameTextInput.text.toString()
+        deviceId?.let {
+            deviceViewModel.changeSensorName(deviceId!!, currentPosition, name)
+            deviceViewModel.refreshData()
+            hideEditDialog()
+        }
+    }
+
+    //---------------- CANCEL BUTTON CLICK ----------------//
+    private fun onCancelButtonClick() {
+        hideEditDialog()
+    }
+
+    //------------------- SHOW EDIT DIALOG ------------------//
+    private fun showEditDialog() {
+        rootView.nameTextInput.setText("")
+        rootView.nameTextInput.requestFocus()
+        rootView.editDialog.visibility = View.VISIBLE
+        rootView.sensorList.alpha = 0.2F
+        showKeyboard()
+    }
+
+    //------------------- HIDE EDIT DIALOG ------------------//
+    private fun hideEditDialog() {
+        rootView.nameTextInput.setText("")
+        rootView.editDialog.visibility = View.GONE
+        rootView.sensorList.alpha = 1.0F
+        hideKeyboard()
+    }
+
+    //-------------------- SHOW KEYBOARD ---------------//
+    private fun showKeyboard() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+        imm.showSoftInput(rootView.nameTextInput, 0)
+    }
+
+    //---------------------- HIDE KEYBOARD -----------------//
+    private fun hideKeyboard() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     //----------------------- NAVIGATE TO HOME FRAGMENT ------------------//
@@ -114,7 +162,7 @@ class DeviceFragment : Fragment() {
         )
     }
 
-    //---------------- CREATE MENU -------------------//
+    //------------------ CREATE MENU -------------------//
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.device_menu, menu)
     }
@@ -139,6 +187,7 @@ class DeviceFragment : Fragment() {
         }
     }
 
+    //---------- ON_STOP() -----------//
     override fun onStop() {
         super.onStop()
         activity?.unbindService(connection)

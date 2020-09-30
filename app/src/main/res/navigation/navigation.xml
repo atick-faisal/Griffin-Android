@@ -60,9 +60,6 @@
             android:id="@+id/action_deviceDetailsFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
         <action
-            android:id="@+id/action_deviceDetailsFragment_to_editNameFragment"
-            app:destination="@id/editNameFragment" />
-        <action
             android:id="@+id/action_deviceDetailsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
@@ -87,26 +84,6 @@
             app:popUpTo="@id/deviceDetailsFragment"
             app:popUpToInclusive="true" />
     </fragment>
-    <dialog
-        android:id="@+id/editNameFragment"
-        android:name="ai.andromeda.griffin.device.EditNameFragment"
-        android:label="fragment_edit_name"
-        tools:layout="@layout/fragment_edit_name" >
-        <action
-            android:id="@+id/action_editNameFragment_to_deviceDetailsFragment"
-            app:destination="@id/deviceDetailsFragment"
-            app:popUpTo="@id/deviceDetailsFragment"
-            app:popUpToInclusive="true" />
-        <argument
-            android:name="position"
-            app:argType="integer"
-            android:defaultValue="0" />
-        <argument
-            android:name="deviceId"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="null" />
-    </dialog>
     <fragment
         android:id="@+id/scannerFragment"
         android:name="ai.andromeda.griffin.scanner.ScannerFragment"

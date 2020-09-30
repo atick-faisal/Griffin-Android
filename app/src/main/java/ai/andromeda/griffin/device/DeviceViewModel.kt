@@ -21,7 +21,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     AndroidViewModel(application) {
 
     private val database = DeviceDatabase.getInstance(application).deviceDao
-    private val sensors: MutableList<SensorModel> = mutableListOf()
+    private lateinit var sensors: MutableList<SensorModel>
     private var numberOfSensors by Delegates.notNull<Int>()
     private lateinit var mqttService: MqttConnectionManagerService
     private lateinit var client: MqttAndroidClient
@@ -34,6 +34,11 @@ class DeviceViewModel(application: Application, val deviceId: String) :
 
     // ---------------- INIT ----------------//
     init {
+        refreshData()
+    }
+
+    //---------------- REFRESH DATA -----------------//
+    fun refreshData() {
         _sensorList.value = getSensorList()
     }
 
@@ -55,7 +60,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
 
             // ------ TOTAL SENSORS -------//
             numberOfSensors = nameArray.size - 1
-
+            sensors = mutableListOf()
             for (i in 0 until numberOfSensors) {
                 try {
                     sensors.add(SensorModel(
@@ -64,7 +69,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
                         )
                     )
                 } catch (e: Exception) {
-                    Log.i(LOG_TAG, "DEVICE_VM: INTEGER PARSING ERROR : $valueArray")
+                    Log.i(LOG_TAG, "DEVICE_VM: INTEGER PARSING ERROR : $nameArray")
                 }
             }
         }
@@ -96,9 +101,32 @@ class DeviceViewModel(application: Application, val deviceId: String) :
         }
     }
 
-    fun changeSensorName(position: Int, name: String) {
-        sensors[position].sensorName = name
-        writeToSharedPreferences()
+    // -------------- CHANGE_SENSOR_NAME() --------------------//
+    fun changeSensorName(deviceId: String, position: Int, name: String) {
+        val names = SharedPreferencesManager
+            .getString(getApplication(), "$deviceId/name")
+
+        if (names != null) {
+            val nameArray: MutableList<String> = names.split(",").toMutableList()
+            try {
+                nameArray[position] = name
+                saveChanges(deviceId, nameArray)
+                Log.i(LOG_TAG, "EDIT_VM: DEVICE NAME CHANGED")
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                Log.i(LOG_TAG, "EDIT_VM: NAME ARRAY INDEX OUT OF BOUND")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    // --------------- SAVE CHANGES -------------------//
+    private fun saveChanges(deviceId: String, nameArray: List<String>) {
+        val nameKey = "$deviceId/name"
+        val names = StringBuilder()
+        for (i in 0 until nameArray.size - 1) {
+            names.append("${nameArray[i]},")
+        }
+        SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
     }
 
     // --------------- PUBLISH ---------------//
@@ -136,8 +164,13 @@ class DeviceViewModel(application: Application, val deviceId: String) :
         val values = StringBuilder()
 
         for (i in 0 until numberOfSensors) {
-            names.append("${sensors[i].sensorName},")
-            values.append("${sensors[i].sensorStatus},")
+            try {
+                names.append("${sensors[i].sensorName},")
+                values.append("${sensors[i].sensorStatus},")
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                Log.i(LOG_TAG, "DEVICE_VM: ARRAY INDEX OUT OF BOUND")
+                e.printStackTrace()
+            }
         }
         SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
@@ -156,6 +189,6 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     // ---------- ON_CLEARED() -----------//
     override fun onCleared() {
         super.onCleared()
-        Log.i(LOG_TAG, "DEVICE VIEW MODEL CLEARED")
+        Log.i(LOG_TAG, "DEVICE_VM: VIEW MODEL CLEARED")
     }
 }
