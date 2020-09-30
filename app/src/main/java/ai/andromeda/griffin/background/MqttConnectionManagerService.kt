@@ -9,6 +9,7 @@ import ai.andromeda.griffin.config.Config.GLOBAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_TITLE
+import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
 import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
@@ -182,7 +183,7 @@ class MqttConnectionManagerService : Service() {
         try {
             val encodedPayload = payload.toByteArray(charset("UTF-8"))
             val message = MqttMessage(encodedPayload)
-            client.publish(topic, message)
+            client.publish(PUBLISH_TOPIC, message) // TODO FIX TOPIC
             showMessage(applicationContext, "PUBLISHED")
             Log.i(LOG_TAG, "SERVICE: PUBLISH -> $payload")
         } catch (e: UnsupportedEncodingException) {
@@ -241,11 +242,15 @@ class MqttConnectionManagerService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             val device = get(deviceId)
             device?.let {
-                device.lockedSensors = lockedSensors
-                update(device)
+                if (sensorValues.size == device.numSensors) {
+                    if (lockedSensors >= 0) {
+                        device.lockedSensors = lockedSensors
+                        update(device)
+                        Log.i(LOG_TAG, "SERVICE: WRITING SENSOR VALUES TO DB")
+                    }
+                }
             }
         }
-        Log.i(LOG_TAG, "SERVICE: WRITING SENSOR VALUES TO DB")
     }
 
     // --------------- DATABASE SUSPEND METHODS ------------------//
@@ -259,6 +264,7 @@ class MqttConnectionManagerService : Service() {
 
     //---------------------- PERSISTENT NOTIFICATION ----------------------//
     private fun showPersistentNotification(content: String) {
+        // TODO ADD INTENT FOR MAIN ACTIVITY
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, 0

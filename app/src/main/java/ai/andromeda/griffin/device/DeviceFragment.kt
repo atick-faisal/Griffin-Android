@@ -64,6 +64,12 @@ class DeviceFragment : Fragment() {
             .get(DeviceViewModel::class.java)
 
         //---------------- LIVE DATA OBSERVERS ---------------//
+        deviceViewModel.deviceList.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                deviceViewModel.refreshData()
+            }
+        })
+
         deviceViewModel.sensorList.observe(viewLifecycleOwner, Observer {
             it?.let {
                 // Update recyclerView
@@ -112,10 +118,14 @@ class DeviceFragment : Fragment() {
     //----------------- SAVE BUTTON CLICK --------------//
     private fun onSaveButtonClick() {
         val name = rootView.nameTextInput.text.toString()
-        deviceId?.let {
-            deviceViewModel.changeSensorName(deviceId!!, currentPosition, name)
-            deviceViewModel.refreshData()
-            hideEditDialog()
+        if (name.isNotEmpty()) {
+            deviceId?.let {
+                deviceViewModel.changeSensorName(deviceId!!, currentPosition, name)
+                deviceViewModel.refreshData()
+                hideEditDialog()
+            }
+        } else {
+            rootView.nameTextInputField.error = getString(R.string.empty_field_warning)
         }
     }
 

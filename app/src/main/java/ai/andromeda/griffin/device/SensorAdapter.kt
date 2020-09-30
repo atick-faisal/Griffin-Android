@@ -40,8 +40,8 @@ class SensorAdapter(private val clickListener: (view: Int, position: Int) -> Uni
         fun bind(item: SensorModel) {
             sensorNameText.text = item.sensorName
             when(item.sensorStatus) {
-                0 -> sensorStatusImage.setImageResource(R.drawable.red_circle)
-                1 -> sensorStatusImage.setImageResource(R.drawable.green_circle)
+                0 -> sensorStatusImage.setImageResource(R.drawable.green_circle)
+                1 -> sensorStatusImage.setImageResource(R.drawable.red_circle)
             }
         }
     }

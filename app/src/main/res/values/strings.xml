@@ -42,4 +42,6 @@
     <string name="device_offline_warning">WARNING: All Devices are offline!</string>
     <string name="device_online">All Devices are Online</string>
     <string name="cancel">Cancel</string>
+    <string name="sensor_name">Sensor Name</string>
+    <string name="empty_field_warning">Field can\'t be Empty</string>
 </resources>

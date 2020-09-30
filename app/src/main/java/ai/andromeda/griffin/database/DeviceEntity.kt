@@ -28,4 +28,8 @@ data class DeviceEntity(
     val additionalInfo: String = "",
     @ColumnInfo(name = "locked_sensors")
     var lockedSensors: Int = 0
-)
+) {
+    init {
+        lockedSensors = numSensors
+    }
+}

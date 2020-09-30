@@ -3,6 +3,7 @@ package ai.andromeda.griffin.device
 import ai.andromeda.griffin.background.MqttConnectionManagerService
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
+import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.database.SensorModel
 import ai.andromeda.griffin.util.SharedPreferencesManager
 import android.app.Application
@@ -28,14 +29,14 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     var mBound: Boolean = false
 
     // ----------------- LIVE DATA VARIABLES -----------------//
+
+    // This is for refreshing the sensor list
+    // When new message comes the device list is refreshed automatica
+    val deviceList = database.getAll()
+
     private val _sensorList = MutableLiveData<List<SensorModel>>()
     val sensorList: LiveData<List<SensorModel>>
         get() = _sensorList
-
-    // ---------------- INIT ----------------//
-    init {
-        refreshData()
-    }
 
     //---------------- REFRESH DATA -----------------//
     fun refreshData() {
@@ -59,7 +60,10 @@ class DeviceViewModel(application: Application, val deviceId: String) :
             val valueArray = values.split(",")
 
             // ------ TOTAL SENSORS -------//
+            // CHECKING SIZE OF NAME ARRAY CAUSE INCOMING MESSAGE
+            // CAN'T ALTER THIS
             numberOfSensors = nameArray.size - 1
+
             sensors = mutableListOf()
             for (i in 0 until numberOfSensors) {
                 try {

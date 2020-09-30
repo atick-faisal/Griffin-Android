@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="4dp"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    app:cardElevation="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,8 +17,8 @@
             android:id="@+id/deviceNameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#212121"
-            android:textSize="20sp"
+            android:textColor="#424242"
+            android:textSize="18sp"
             tools:text="Home" />
 
         <TextView
@@ -36,9 +36,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/deviceNameText"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_toEndOf="@id/numSensorsText"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/sensors"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp" />
@@ -46,11 +48,18 @@
         <TextView
             android:id="@+id/numLockedText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_below="@id/sensorsText"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/numSensorsText"
-            android:background="@color/lockedColor"
+            android:background="@drawable/green_pill"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="2dp"
             android:textSize="14sp"
             tools:text="3 Unlocked" />
 
@@ -59,9 +68,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/numLockedText"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
             android:layout_toEndOf="@id/numSensorsText"
-            android:background="@color/unlockedColor"
+            android:background="@drawable/red_pill"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="2dp"
             android:textSize="14sp"
             tools:text="3 Unlocked" />
 
