@@ -1,34 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    android:background="@drawable/card_white"
-    android:elevation="4dp"
-    android:padding="16dp">
+    app:cardElevation="4dp">
 
-    <TextView
-        android:id="@+id/sensorNameText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#212121"
-        android:textSize="18sp"
-        android:text="SENSOR 1"/>
-
-    <ImageView
-        android:id="@+id/nameEditButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_more_vert"
-        android:layout_alignParentEnd="true"/>
-
-    <ImageView
-        android:id="@+id/sensorStatusImage"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/red_circle"
-        android:layout_below="@+id/nameEditButton"
-        android:layout_margin="8dp"/>
+        android:padding="16dp">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/sensorNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="SENSOR 1"
+            android:textColor="#212121"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/sensorStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sensorNameText"
+            tools:text="SENSOR 1"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/nameEditButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_more_vert" />
+
+        <ImageView
+            android:id="@+id/sensorStatusImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sensorStatusText"
+            android:layout_margin="8dp"
+            android:src="@drawable/red_circle" />
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

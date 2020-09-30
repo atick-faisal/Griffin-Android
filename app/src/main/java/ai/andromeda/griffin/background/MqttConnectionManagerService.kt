@@ -24,7 +24,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
@@ -48,7 +47,11 @@ class MqttConnectionManagerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         this.connect(client)
-        showPersistentNotification("Warning: All Devices are OFFLINE!")
+        if (client.isConnected) {
+            showPersistentNotification("All Devices are ONLINE")
+        } else {
+            showPersistentNotification("Warning: All Devices are OFFLINE!")
+        }
         return START_STICKY
     }
 
@@ -127,7 +130,6 @@ class MqttConnectionManagerService : Service() {
                     asyncActionToken: IMqttToken,
                     exception: Throwable
                 ) {
-                    showPersistentNotification("Warning: All Devices are OFFLINE!")
                     Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
                     showMessage("COULD NOT SUBSCRIBE")
                     // stopService()

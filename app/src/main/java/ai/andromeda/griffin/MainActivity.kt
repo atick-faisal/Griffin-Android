@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setSupportActionBar(topAppBar)
+        // setSupportActionBar(topAppBar)
 
         startMqttService()
     }
