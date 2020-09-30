@@ -4,6 +4,7 @@ import ai.andromeda.griffin.config.Config.ALLOWED_CHARACTERS
 import ai.andromeda.griffin.config.Config.ID_LENGTH
 import android.content.Context
 import android.widget.Toast
+import com.google.gson.Gson
 import java.util.*
 
 fun generateDeviceId(): String {
@@ -16,4 +17,9 @@ fun generateDeviceId(): String {
 
 fun showMessage(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+fun toArray(json: String): IntArray? {
+    val arrayParser = Gson()
+    return arrayParser.fromJson(json, IntArray::class.java)
 }
