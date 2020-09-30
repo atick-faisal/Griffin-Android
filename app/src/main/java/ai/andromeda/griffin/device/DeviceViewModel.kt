@@ -3,6 +3,8 @@ package ai.andromeda.griffin.device
 import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
+import ai.andromeda.griffin.database.DeviceDatabase
+import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.database.SensorModel
 import ai.andromeda.griffin.util.MqttHelper
 import ai.andromeda.griffin.util.SharedPreferencesManager
@@ -12,6 +14,8 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import org.json.JSONException
@@ -25,6 +29,7 @@ class DeviceViewModel(
 ) : AndroidViewModel(application) {
 
     private val client = MqttHelper.getInstance(application)
+    private val database = DeviceDatabase.getInstance(application).deviceDao
 
 //    private val clientId: String = MqttClient.generateClientId()
 //    private val client = MqttAndroidClient(
@@ -222,9 +227,19 @@ class DeviceViewModel(
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
     }
 
+    fun removeDevice() {
+        viewModelScope.launch {
+            delete(deviceId)
+        }
+    }
+
+    private suspend fun delete(deviceId: String) {
+        database.delete(deviceId)
+    }
+
     override fun onCleared() {
         super.onCleared()
         client.close()
-        Log.i(LOG_TAG, "DEVICE VIEWMODEL CLEARED")
+        Log.i(LOG_TAG, "DEVICE VIEW MODEL CLEARED")
     }
 }

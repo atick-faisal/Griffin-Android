@@ -1,5 +1,6 @@
 package ai.andromeda.griffin.home
 
+import ai.andromeda.griffin.MainActivity
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
@@ -61,6 +62,11 @@ class HomeFragment : Fragment() {
             getString(R.string.dashboard)
 
         return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i(LOG_TAG, "A VALUE : ${MainActivity.a}")
     }
 
     private fun navigateToRegister() {

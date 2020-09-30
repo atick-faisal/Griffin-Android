@@ -7,4 +7,12 @@
         android:title="@string/share"
         android:contentDescription="@string/share_you_device"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/deleteDevice"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/delete"
+        android:contentDescription="@string/delete_this_device"
+        app:showAsAction="never" />
+
 </menu>

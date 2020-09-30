@@ -90,6 +90,12 @@ class DeviceFragment : Fragment() {
         )
     }
 
+    private fun navigateToHome() {
+        findNavController().navigate(
+            DeviceFragmentDirections.actionDeviceDetailsFragmentToHomeFragment()
+        )
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.device_menu, menu)
     }
@@ -103,6 +109,11 @@ class DeviceFragment : Fragment() {
                         deviceName = deviceName
                     )
                 )
+                true
+            }
+            R.id.deleteDevice -> {
+                deviceViewModel.removeDevice()
+                navigateToHome()
                 true
             }
             else -> NavigationUI

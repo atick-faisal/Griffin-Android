@@ -12,8 +12,8 @@ interface DeviceDao {
     @Update
     suspend fun update(entity: DeviceEntity)
 
-    @Delete
-    suspend fun delete(entity: DeviceEntity)
+    @Query("DELETE FROM `devices` WHERE device_id = :deviceId")
+    suspend fun delete(deviceId: String)
 
     @Query("SELECT * FROM `devices`")
     fun getAll(): LiveData<List<DeviceEntity>>
