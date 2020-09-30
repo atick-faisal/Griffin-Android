@@ -12,7 +12,7 @@ import androidx.work.WorkerParameters
 class MqttWorker(val context: Context, params: WorkerParameters) : Worker(context, params) {
 
     override fun doWork(): Result {
-        Log.i(LOG_TAG, "WORK REQUESTED!")
+        Log.i(LOG_TAG, "WORKER: WORK REQUESTED!")
         startMqttService()
         return Result.success()
     }

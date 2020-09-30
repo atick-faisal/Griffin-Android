@@ -61,7 +61,7 @@ class App : Application() {
             .setConstraints(constraints)
             .build()
 
-        Log.i(LOG_TAG, "MQTT SERVICE IS SCHEDULED")
+        Log.i(LOG_TAG, "APP: MQTT SERVICE IS SCHEDULED")
         WorkManager.getInstance().enqueueUniquePeriodicWork(
             WORK_NAME,
             ExistingPeriodicWorkPolicy.REPLACE,

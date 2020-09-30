@@ -1,102 +1,99 @@
 package ai.andromeda.griffin.device
 
-import ai.andromeda.griffin.config.Config
+import ai.andromeda.griffin.background.MqttConnectionManagerService
 import ai.andromeda.griffin.config.Config.LOG_TAG
-import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
-import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.database.SensorModel
-import ai.andromeda.griffin.util.MqttHelper
 import ai.andromeda.griffin.util.SharedPreferencesManager
 import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
-import org.eclipse.paho.client.mqttv3.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.UnsupportedEncodingException
 import kotlin.properties.Delegates
 
-class DeviceViewModel(
-    application: Application,
-    val deviceId: String
-) : AndroidViewModel(application) {
+class DeviceViewModel(application: Application, val deviceId: String) :
+    AndroidViewModel(application) {
 
-    private val client = MqttHelper.getInstance(application)
     private val database = DeviceDatabase.getInstance(application).deviceDao
-
-//    private val clientId: String = MqttClient.generateClientId()
-//    private val client = MqttAndroidClient(
-//        application,
-//        Config.LOCAL_BROKER_IP,
-//        clientId
-//    )
     private val sensors: MutableList<SensorModel> = mutableListOf()
+    private var numberOfSensors by Delegates.notNull<Int>()
+    private lateinit var mqttService: MqttConnectionManagerService
+    private lateinit var client: MqttAndroidClient
+    var mBound: Boolean = false
+
+    // ----------------- LIVE DATA VARIABLES -----------------//
     private val _sensorList = MutableLiveData<List<SensorModel>>()
     val sensorList: LiveData<List<SensorModel>>
         get() = _sensorList
 
-    private val _connectionSuccessful = MutableLiveData<Boolean>()
-    val connectionSuccessful: LiveData<Boolean>
-        get() = _connectionSuccessful
-
-    private var numberOfSensors by Delegates.notNull<Int>()
-
+    // ---------------- INIT ----------------//
     init {
         _sensorList.value = getSensorList()
-        connectToBroker()
     }
 
+    // --------------- INITIALIZE CLIENT ----------------//
+    fun initializeClient(service: MqttConnectionManagerService) {
+        mqttService = service
+        client = service.client
+    }
+
+    //---------------------- GET SENSORS FROM SP -------------------//
     private fun getSensorList(): List<SensorModel> {
-        Log.i(LOG_TAG, "INIT CALLED")
-        val names = SharedPreferencesManager
-            .getString(getApplication(), "$deviceId/name")
-
-
-        val values = SharedPreferencesManager
-            .getString(getApplication(), "$deviceId/value")
+        Log.i(LOG_TAG, "DEVICE_VM: LOADING SENSORS...")
+        val names = SharedPreferencesManager.getString(getApplication(), "$deviceId/name")
+        val values = SharedPreferencesManager.getString(getApplication(), "$deviceId/value")
 
         if (names != null && values != null) {
             val nameArray = names.split(",")
             val valueArray = values.split(",")
 
+            // ------ TOTAL SENSORS -------//
             numberOfSensors = nameArray.size - 1
 
             for (i in 0 until numberOfSensors) {
                 try {
-                    sensors.add(
-                        SensorModel(
+                    sensors.add(SensorModel(
                             sensorName = nameArray[i],
                             sensorStatus = valueArray[i].toInt()
                         )
                     )
                 } catch (e: Exception) {
-                    Log.i(LOG_TAG, "INTEGER PARSING ERROR : $valueArray")
+                    Log.i(LOG_TAG, "DEVICE_VM: INTEGER PARSING ERROR : $valueArray")
                 }
             }
         }
-        Log.i(LOG_TAG, "SIZE : ${sensors.size}")
-
+        Log.i(LOG_TAG, "DEVICE_VM: LOADED : ${sensors.size} SENSORS")
         return sensors
     }
 
+    //---------------- CONTROL SENSOR STATUS ----------------//
     fun toggleStatusAt(position: Int) {
-        when (sensors[position].sensorStatus) {
-            0 -> sensors[position].sensorStatus = 1
-            1 -> sensors[position].sensorStatus = 0
+        try {
+            val sensor = sensors[position]
+            when (sensor.sensorStatus) {
+                0 -> sensor.sensorStatus = 1
+                1 -> sensor.sensorStatus = 0
+                else -> Log.i(LOG_TAG, "DEVICE_VM: CORRUPT SENSOR")
+            }
+            //------------- SAVING NEW STATUS -----------//
+            writeToSharedPreferences()
+            _sensorList.value = sensors
+
+            // --------- PUBLISH DATA --------//
+            publishData()
+
+            Log.i(LOG_TAG, "DEVICE_VM: SENSOR[$position] = ${sensor.sensorStatus}")
+
+        //----------- PARSING ERROR ------------//
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            e.printStackTrace()
         }
-
-        Log.i(LOG_TAG, "SENSORS : ${sensors[position].sensorStatus}")
-
-        publish()
-        writeToSharedPreferences()
-        _sensorList.value = sensors
     }
 
     fun changeSensorName(position: Int, name: String) {
@@ -104,91 +101,22 @@ class DeviceViewModel(
         writeToSharedPreferences()
     }
 
-    private fun connectToBroker() {
-        try {
-            if (!client.isConnected) {
-                val token = client.connect()
-                ////////////////////////////////////////////////////////////
-                token.actionCallback = object : IMqttActionListener {
-                    override fun onSuccess(asyncActionToken: IMqttToken) {
-                        showMessage("MQTT CONNECTED!")
-                        Log.i(LOG_TAG, "MQTT CONNECTED!")
-                        onConnectionSuccessful()
-                        subscribe(Config.SUBSCRIPTION_TOPIC)
-                    }
-
-                    override fun onFailure(
-                        asyncActionToken: IMqttToken,
-                        exception: Throwable
-                    ) {
-                        showMessage("CANNOT CONNECT!")
-                        Log.i(LOG_TAG, "CANNOT CONNECT!")
-                    }
-                }
-                ////////////////////////////////////////////////////////////
-                client.setCallback(object : MqttCallback {
-                    override fun messageArrived(
-                        topic: String?,
-                        message: MqttMessage?
-                    ) {
-                        Log.i(LOG_TAG, "MESSAGE : " + message.toString())
-                        showMessage(message.toString())
-                    }
-
-                    override fun connectionLost(cause: Throwable?) {
-                        Log.i(LOG_TAG, "CONNECTION LOST")
-                        showMessage("CONNECTION LOST")
-                    }
-
-                    override fun deliveryComplete(token: IMqttDeliveryToken?) {}
-                })
-            }
-        } catch (e: MqttException) {
-            showMessage("ERROR WHILE CONNECTING")
-            Log.i(LOG_TAG, "ERROR WHILE CONNECTING")
-        }
-    }
-
-    private fun subscribe(topic: String) {
-        try {
-            val subToken = client.subscribe(topic, 1)
-            subToken.actionCallback = object : IMqttActionListener {
-                override fun onSuccess(asyncActionToken: IMqttToken) {
-                    Log.i(LOG_TAG, "SUBSCRIBED TO : $topic")
-                    showMessage("SUBSCRIBED TO : $topic")
-                }
-
-                override fun onFailure(
-                    asyncActionToken: IMqttToken,
-                    exception: Throwable
-                ) {
-                    Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
-                    showMessage("COULD NOT SUBSCRIBE")
-                }
-            }
-        } catch (e: MqttException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun publish() {
+    // --------------- PUBLISH ---------------//
+    private fun publishData() {
         val payload = getPayload()
-        try {
-            val encodedPayload = payload.toByteArray(charset("UTF-8"))
-            val message = MqttMessage(encodedPayload)
-            client.publish(PUBLISH_TOPIC, message)
-        } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
-        } catch (e: MqttException) {
-            e.printStackTrace()
+        if (mBound) {
+            if (client.isConnected) {
+                mqttService.publish("Sub/$deviceId", payload)
+            }
         }
     }
 
+    //-------------------- JSON DATA TO PUBLISH ---------------//
     private fun getPayload(): String {
         val payload = JSONObject()
         try {
             payload.put("Device_ID", deviceId)
-            payload.put("Count", 0)
+            payload.put("Count", 0) // TODO COUNT
             payload.put("Command", "Control")
             payload.put("Number_of_Sensors", numberOfSensors)
             payload.put("Sensors", sensors.map {
@@ -200,19 +128,7 @@ class DeviceViewModel(
         return payload.toString()
     }
 
-    private fun showMessage(message: String) {
-        Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    private fun onConnectionSuccessful() {
-        _connectionSuccessful.value = true
-    }
-
-    fun doneShowingViews() {
-        _connectionSuccessful.value = null
-    }
-
+    //------------------ WRITE CHANGES TO SP ----------------//
     private fun writeToSharedPreferences() {
         val nameKey = "$deviceId/name"
         val valueKey = "$deviceId/value"
@@ -227,19 +143,19 @@ class DeviceViewModel(
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
     }
 
+    //----------- REMOVING DEVICE FROM DATABASE --------- //
     fun removeDevice() {
         viewModelScope.launch {
             delete(deviceId)
         }
     }
-
     private suspend fun delete(deviceId: String) {
         database.delete(deviceId)
     }
 
+    // ---------- ON_CLEARED() -----------//
     override fun onCleared() {
         super.onCleared()
-        client.close()
         Log.i(LOG_TAG, "DEVICE VIEW MODEL CLEARED")
     }
 }

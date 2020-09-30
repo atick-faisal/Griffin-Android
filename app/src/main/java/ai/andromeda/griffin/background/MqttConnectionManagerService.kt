@@ -30,11 +30,12 @@ import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.UnsupportedEncodingException
 
 @Suppress("SameParameterValue")
 class MqttConnectionManagerService : Service() {
 
-    private lateinit var client: MqttAndroidClient
+    lateinit var client: MqttAndroidClient
     private lateinit var deviceDatabase: DeviceDatabase
 
     // Service Binder Instance
@@ -109,8 +110,9 @@ class MqttConnectionManagerService : Service() {
 
                 //--------------------- MESSAGE CALLBACK --------------------//
                 client.setCallback(object : MqttCallback {
-                    override fun messageArrived(topic: String?,
-                                                message: MqttMessage?
+                    override fun messageArrived(
+                        topic: String?,
+                        message: MqttMessage?
                     ) {
                         showMessage(applicationContext, message.toString())
                         message?.let { processMessage(message.toString()) }
@@ -133,7 +135,7 @@ class MqttConnectionManagerService : Service() {
                         // stopService()
                     }
 
-                    override fun deliveryComplete(token: IMqttDeliveryToken?) { }
+                    override fun deliveryComplete(token: IMqttDeliveryToken?) {}
                 })
             }
         }
@@ -144,6 +146,9 @@ class MqttConnectionManagerService : Service() {
             // stopService()
         }
     }
+
+    //------------------------- SUBSCRIBE TO ALL -----------------------//
+    // TODO SUBSCRIBE TO ALL TOPICS
 
     //-------------------------- SUBSCRIBE() -----------------------//
     private fun subscribe(topic: String) {
@@ -168,6 +173,23 @@ class MqttConnectionManagerService : Service() {
                 }
             }
         } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+    }
+
+    //------------------ PUBLISH ----------------------//
+    fun publish(topic: String, payload: String) {
+        try {
+            val encodedPayload = payload.toByteArray(charset("UTF-8"))
+            val message = MqttMessage(encodedPayload)
+            client.publish(topic, message)
+            showMessage(applicationContext, "PUBLISHED")
+            Log.i(LOG_TAG, "SERVICE: PUBLISH -> $payload")
+        } catch (e: UnsupportedEncodingException) {
+            e.printStackTrace()
+        } catch (e: MqttException) {
+            showMessage(applicationContext, "PUBLISH FAILED")
+            Log.i(LOG_TAG, "SERVICE: PUBLISH FAILED")
             e.printStackTrace()
         }
     }
@@ -230,6 +252,7 @@ class MqttConnectionManagerService : Service() {
     private suspend fun update(device: DeviceEntity) {
         deviceDatabase.deviceDao.update(device)
     }
+
     private suspend fun get(deviceId: String): DeviceEntity? {
         return deviceDatabase.deviceDao.get(deviceId)
     }

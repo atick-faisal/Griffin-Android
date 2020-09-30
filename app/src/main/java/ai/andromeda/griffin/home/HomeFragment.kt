@@ -64,11 +64,6 @@ class HomeFragment : Fragment() {
         return rootView
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.i(LOG_TAG, "A VALUE : ${MainActivity.a}")
-    }
-
     private fun navigateToRegister() {
         findNavController().navigate(
             HomeFragmentDirections.actionHomeFragmentToRegisterFragment()
