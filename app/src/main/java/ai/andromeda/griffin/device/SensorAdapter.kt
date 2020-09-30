@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.sensor_list_item.view.*
 
@@ -23,7 +24,10 @@ class SensorAdapter(private val clickListener: (view: Int, position: Int) -> Uni
         RecyclerView.ViewHolder(view) {
 
         private val sensorNameText: TextView = view.sensorNameText
+        private val sensorStatusText: TextView = view.sensorStatusText
         private val sensorStatusImage: ImageView = view.sensorStatusImage
+        private val res = view.context.resources
+        private val context = view.context
 
         companion object {
             fun from(parent: ViewGroup): SensorViewHolder {
@@ -40,8 +44,20 @@ class SensorAdapter(private val clickListener: (view: Int, position: Int) -> Uni
         fun bind(item: SensorModel) {
             sensorNameText.text = item.sensorName
             when(item.sensorStatus) {
-                0 -> sensorStatusImage.setImageResource(R.drawable.green_circle)
-                1 -> sensorStatusImage.setImageResource(R.drawable.red_circle)
+                0 -> {
+                    sensorStatusText.text = res.getString(R.string.locked_status)
+                    sensorStatusText.background = ContextCompat.getDrawable(
+                        context, R.drawable.green_pill
+                    )
+                    sensorStatusImage.setImageResource(R.drawable.green_circle)
+                }
+                1 -> {
+                    sensorStatusText.text = res.getString(R.string.unlocked_status)
+                    sensorStatusText.background = ContextCompat.getDrawable(
+                        context, R.drawable.red_pill
+                    )
+                    sensorStatusImage.setImageResource(R.drawable.red_circle)
+                }
             }
         }
     }

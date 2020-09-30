@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="false"
     tools:context=".device.DeviceFragment">
 
     <RelativeLayout
@@ -69,6 +70,7 @@
         android:paddingLeft="4dp"
         android:paddingTop="8dp"
         android:paddingRight="4dp"
+        android:paddingBottom="8dp"
         tools:listitem="@layout/sensor_list_item" />
 
 </RelativeLayout>

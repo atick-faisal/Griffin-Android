@@ -3,9 +3,9 @@ package ai.andromeda.griffin.device
 import ai.andromeda.griffin.background.MqttConnectionManagerService
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
-import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.database.SensorModel
 import ai.andromeda.griffin.util.SharedPreferencesManager
+import ai.andromeda.griffin.util.showMessage
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -84,20 +84,28 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     //---------------- CONTROL SENSOR STATUS ----------------//
     fun toggleStatusAt(position: Int) {
         try {
-            val sensor = sensors[position]
-            when (sensor.sensorStatus) {
-                0 -> sensor.sensorStatus = 1
-                1 -> sensor.sensorStatus = 0
-                else -> Log.i(LOG_TAG, "DEVICE_VM: CORRUPT SENSOR")
+            if (mBound) {
+                if (client.isConnected) {
+                    val sensor = sensors[position]
+                    when (sensor.sensorStatus) {
+                        0 -> sensor.sensorStatus = 1
+                        1 -> sensor.sensorStatus = 0
+                        else -> Log.i(LOG_TAG, "DEVICE_VM: CORRUPT SENSOR")
+                    }
+
+                    //------------- SAVING NEW STATUS -----------//
+                    writeToSharedPreferences()
+                    _sensorList.value = sensors
+
+                    // --------- PUBLISH DATA --------//
+                    publishData()
+
+                    Log.i(LOG_TAG, "DEVICE_VM: SENSOR[$position] = ${sensor.sensorStatus}")
+                }
+                else {
+                    showMessage(getApplication(), "NO CONNECTION")
+                }
             }
-            //------------- SAVING NEW STATUS -----------//
-            writeToSharedPreferences()
-            _sensorList.value = sensors
-
-            // --------- PUBLISH DATA --------//
-            publishData()
-
-            Log.i(LOG_TAG, "DEVICE_VM: SENSOR[$position] = ${sensor.sensorStatus}")
 
         //----------- PARSING ERROR ------------//
         } catch (e: ArrayIndexOutOfBoundsException) {
@@ -105,7 +113,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
         }
     }
 
-    // -------------- CHANGE_SENSOR_NAME() --------------------//
+    // ----------------- CHANGE_SENSOR_NAME() --------------------//
     fun changeSensorName(deviceId: String, position: Int, name: String) {
         val names = SharedPreferencesManager
             .getString(getApplication(), "$deviceId/name")
@@ -137,9 +145,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     private fun publishData() {
         val payload = getPayload()
         if (mBound) {
-            if (client.isConnected) {
-                mqttService.publish("Sub/$deviceId", payload)
-            }
+            mqttService.publish("Sub/$deviceId", payload)
         }
     }
 

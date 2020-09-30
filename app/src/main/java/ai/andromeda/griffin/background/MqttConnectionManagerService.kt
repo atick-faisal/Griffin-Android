@@ -181,11 +181,16 @@ class MqttConnectionManagerService : Service() {
     //------------------ PUBLISH ----------------------//
     fun publish(topic: String, payload: String) {
         try {
-            val encodedPayload = payload.toByteArray(charset("UTF-8"))
-            val message = MqttMessage(encodedPayload)
-            client.publish(PUBLISH_TOPIC, message) // TODO FIX TOPIC
-            showMessage(applicationContext, "PUBLISHED")
-            Log.i(LOG_TAG, "SERVICE: PUBLISH -> $payload")
+            if (client.isConnected) {
+                val encodedPayload = payload.toByteArray(charset("UTF-8"))
+                val message = MqttMessage(encodedPayload)
+                client.publish(PUBLISH_TOPIC, message) // TODO FIX TOPIC
+                showMessage(applicationContext, "PUBLISHED")
+                Log.i(LOG_TAG, "SERVICE: PUBLISH -> $payload")
+            }
+            else {
+                showMessage(applicationContext, "NO CONNECTION")
+            }
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
         } catch (e: MqttException) {

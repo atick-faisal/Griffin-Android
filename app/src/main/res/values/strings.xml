@@ -44,4 +44,6 @@
     <string name="cancel">Cancel</string>
     <string name="sensor_name">Sensor Name</string>
     <string name="empty_field_warning">Field can\'t be Empty</string>
+    <string name="locked_status">LOCKED</string>
+    <string name="unlocked_status">OPEN</string>
 </resources>
