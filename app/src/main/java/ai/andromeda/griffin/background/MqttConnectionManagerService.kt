@@ -161,7 +161,7 @@ class MqttConnectionManagerService : Service() {
                     subscribe("Pub/$deviceId")
                 }
             }
-            showMessage(applicationContext, "SERVICE: SUBSCRIBED TO ALL")
+            // showMessage(applicationContext, "SERVICE: SUBSCRIBED TO ALL")
         }
     }
 
