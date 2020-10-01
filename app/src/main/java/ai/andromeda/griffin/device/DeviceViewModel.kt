@@ -25,7 +25,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     AndroidViewModel(application) {
 
     private val database = DeviceDatabase.getInstance(application).deviceDao
-    private lateinit var sensors: MutableList<SensorModel>
+    private var sensors: MutableList<SensorModel> = mutableListOf()
     private var numberOfSensors by Delegates.notNull<Int>()
     private lateinit var mqttService: MqttConnectionManagerService
     private lateinit var client: MqttAndroidClient
@@ -67,7 +67,9 @@ class DeviceViewModel(application: Application, val deviceId: String) :
             // CAN'T ALTER THIS
             numberOfSensors = nameArray.size - 1
 
+            // Empty sensors
             sensors = mutableListOf()
+
             for (i in 0 until numberOfSensors) {
                 try {
                     sensors.add(SensorModel(

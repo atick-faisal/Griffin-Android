@@ -18,13 +18,13 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class ShareViewModel(
-    deviceDatabase: DeviceDatabase,
     application: Application,
     val deviceId: String
 ) : AndroidViewModel(application) {
 
-    val database = deviceDatabase.deviceDao
-    
+    val database = DeviceDatabase.getInstance(application).deviceDao
+
+    //-------------------- LIVE DATA ---------------------//
     private val _device = MutableLiveData<DeviceEntity>()
     val device: LiveData<DeviceEntity>
         get() = _device
@@ -33,10 +33,12 @@ class ShareViewModel(
     val qrBitmap: LiveData<Bitmap>
         get() = _qrBitmap
 
+    //--------------- INIT -----------------//
     init {
         getDevice()
     }
 
+    //----------------- GENERATE BITMAP ---------------//
     fun generateBitmap(mDevice: DeviceEntity) {
         val data = getStringData(mDevice)
 
@@ -48,18 +50,14 @@ class ShareViewModel(
             e.printStackTrace()
         }
     }
-    
-    private fun getDevice() {
-        viewModelScope.launch {
-            _device.value = getDeviceFromDatabase()
-        }
-    }
 
+    //------------------ JSON TO STRING -------------------//
     private fun getStringData(mDevice: DeviceEntity): String {
         val json = getJSONObject(mDevice)
         return json.toString()
     }
 
+    //----------------- JSON OBJECT OF THE DEVICE ----------------//
     private fun getJSONObject(device: DeviceEntity): JSONObject {
         val json = JSONObject()
         try {
@@ -76,10 +74,16 @@ class ShareViewModel(
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        Log.i(LOG_TAG, "JSON : ${json.toString()}")
+        Log.i(LOG_TAG, "SHARE_VM: DEVICE JSON : $json")
         return json
     }
 
+    //------------------- DATABASE OPERATIONS -------------------//
+    private fun getDevice() {
+        viewModelScope.launch {
+            _device.value = getDeviceFromDatabase()
+        }
+    }
     private suspend fun getDeviceFromDatabase(): DeviceEntity? {
         return database.get(deviceId = deviceId)
     }

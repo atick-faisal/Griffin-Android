@@ -21,13 +21,19 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
+            app:destination="@id/registerFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_homeFragment_to_deviceDetailsFragment"
-            app:destination="@id/deviceDetailsFragment" />
+            app:destination="@id/deviceDetailsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_homeFragment_to_scannerFragment"
-            app:destination="@id/scannerFragment" />
+            app:destination="@id/scannerFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -58,7 +64,9 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_deviceDetailsFragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
+            app:destination="@id/shareFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_deviceDetailsFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -83,6 +91,7 @@
         <action
             android:id="@+id/action_shareFragment_to_deviceDetailsFragment"
             app:destination="@id/deviceDetailsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
             app:popUpTo="@id/deviceDetailsFragment"
             app:popUpToInclusive="true" />
     </fragment>
