@@ -17,8 +17,8 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="ai.andromeda.griffin.home.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
@@ -32,8 +32,8 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="ai.andromeda.griffin.register.RegisterFragment"
-        android:label="fragment_register"
-        tools:layout="@layout/fragment_register" >
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_registerFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -43,19 +43,19 @@
     <fragment
         android:id="@+id/deviceDetailsFragment"
         android:name="ai.andromeda.griffin.device.DeviceFragment"
-        android:label="fragment_device_details"
-        tools:layout="@layout/fragment_device" >
+        android:label="Device Details"
+        tools:layout="@layout/fragment_device">
         <argument
             android:name="deviceId"
+            android:defaultValue="null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="null" />
+            app:nullable="true" />
 
         <argument
             android:name="deviceName"
+            android:defaultValue="null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_deviceDetailsFragment_to_shareFragment"
             app:destination="@id/shareFragment" />
@@ -68,18 +68,18 @@
     <fragment
         android:id="@+id/shareFragment"
         android:name="ai.andromeda.griffin.share.ShareFragment"
-        android:label="fragment_share"
-        tools:layout="@layout/fragment_share" >
+        android:label="Share"
+        tools:layout="@layout/fragment_share">
         <argument
             android:name="deviceId"
+            android:defaultValue="null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="null" />
+            app:nullable="true" />
         <argument
             android:name="deviceName"
+            android:defaultValue="null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_shareFragment_to_deviceDetailsFragment"
             app:destination="@id/deviceDetailsFragment"
@@ -89,8 +89,8 @@
     <fragment
         android:id="@+id/scannerFragment"
         android:name="ai.andromeda.griffin.scanner.ScannerFragment"
-        android:label="fragment_scanner"
-        tools:layout="@layout/fragment_scanner" >
+        android:label="Scanner"
+        tools:layout="@layout/fragment_scanner">
         <action
             android:id="@+id/action_scannerFragment_to_homeFragment"
             app:destination="@id/homeFragment"

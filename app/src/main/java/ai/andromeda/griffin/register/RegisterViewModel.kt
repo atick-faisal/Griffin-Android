@@ -26,8 +26,7 @@ class RegisterViewModel(application: Application) :
     AndroidViewModel(application) {
 
     private val database = DeviceDatabase.getInstance(application).deviceDao
-    private val clientId: String = MqttClient.generateClientId()
-    private val client = MqttAndroidClient(application, LOCAL_BROKER_IP, clientId)
+    private lateinit var client: MqttAndroidClient
 
     //--------------------- LIVE DATA --------------------//
     private val _connectionSuccessful = MutableLiveData<Boolean>()
@@ -36,11 +35,12 @@ class RegisterViewModel(application: Application) :
 
     init {
         _connectionSuccessful.value = null
-        connectToBroker()
     }
 
     //----------------------- MQTT CONNECT -------------------//
     fun connectToBroker() {
+        val clientId: String = MqttClient.generateClientId()
+        client = MqttAndroidClient(getApplication(), LOCAL_BROKER_IP, clientId)
         try {
             if (!client.isConnected) {
                 val token = client.connect()
@@ -114,9 +114,15 @@ class RegisterViewModel(application: Application) :
     fun publish(data: DeviceEntity) {
         val payload = getJsonObject(data)
         try {
-            val encodedPayload = payload.toByteArray(charset("UTF-8"))
-            val message = MqttMessage(encodedPayload)
-            client.publish(Config.PUBLISH_TOPIC, message)
+            if (::client.isInitialized) {
+                if (client.isConnected) {
+                    val encodedPayload = payload.toByteArray(charset("UTF-8"))
+                    val message = MqttMessage(encodedPayload)
+                    client.publish(Config.PUBLISH_TOPIC, message)
+                    showMessage(getApplication(), "REGISTERED")
+                    Log.i(LOG_TAG, "REGISTER_VM: PUBLISH -> $payload")
+                }
+            }
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
         } catch (e: MqttException) {

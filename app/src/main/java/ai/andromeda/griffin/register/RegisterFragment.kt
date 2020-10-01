@@ -28,7 +28,7 @@ class RegisterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_register, container, false)
-        val application = requireNotNull(this.activity).application
+        val application = requireActivity().application
 
         //--------------------- VIEW MODEL SETUP ---------------------//
         val registerViewModelFactory = RegisterViewModelFactory(application)
@@ -55,6 +55,11 @@ class RegisterFragment : Fragment() {
             getString(R.string.register)
 
         return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        registerViewModel.connectToBroker()
     }
 
     //-------------------- CONNECTED ---------------------//

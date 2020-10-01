@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/topMenuGroup"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/registerFragment"
+            android:icon="@drawable/ic_device"
+            android:title="@string/register"
+            android:contentDescription="@string/register_new_device"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/scannerFragment"
+            android:icon="@drawable/ic_scan"
+            android:title="@string/scan"
+            android:contentDescription="@string/scan_new_device"
+            app:showAsAction="ifRoom" />
+
+    </group>
+
+    <group android:id="@+id/bottomMenuGroup"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/aboutFragment"
+            android:icon="@drawable/ic_about"
+            android:title="@string/about"
+            android:contentDescription="@string/about_this_app"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/contactFragment"
+            android:icon="@drawable/ic_contact"
+            android:title="@string/contact"
+            android:contentDescription="@string/contact_us"
+            app:showAsAction="ifRoom" />
+
+    </group>
+
+</menu>

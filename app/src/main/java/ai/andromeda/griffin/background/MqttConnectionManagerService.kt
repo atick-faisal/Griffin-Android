@@ -196,7 +196,7 @@ class MqttConnectionManagerService : Service() {
                 val encodedPayload = payload.toByteArray(charset("UTF-8"))
                 val message = MqttMessage(encodedPayload)
                 client.publish(PUBLISH_TOPIC, message) // TODO FIX TOPIC
-                showMessage(applicationContext, "PUBLISHED")
+                showMessage(applicationContext, "COMMAND SENT")
                 Log.i(LOG_TAG, "SERVICE: PUBLISH -> $payload")
             }
             else {

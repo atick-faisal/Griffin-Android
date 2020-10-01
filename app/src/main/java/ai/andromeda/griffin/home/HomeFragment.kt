@@ -1,8 +1,10 @@
 package ai.andromeda.griffin.home
 
 import ai.andromeda.griffin.R
+import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceEntity
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -16,6 +18,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var deviceListAdapter: DeviceAdapter
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var rootView: View
 
     //-------------- ON_CREATE_VIEW() ------------------//
     override fun onCreateView(
@@ -23,7 +26,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_home, container, false)
+        rootView = inflater.inflate(R.layout.fragment_home, container, false)
         val application = requireNotNull(this.activity).application
 
         //----------------- VIEW MODEL SETUP -------------------//
@@ -39,7 +42,11 @@ class HomeFragment : Fragment() {
         //------------------- LIVE DATA OBSERVERS ------------------------//
         homeViewModel.deviceList.observe(viewLifecycleOwner, Observer {
             it?.let {
-                deviceListAdapter.deviceList = it
+                if (it.isEmpty()) { showNoDevicePrompt() }
+                else {
+                    hideNoDevicePrompt()
+                    deviceListAdapter.deviceList = it
+                }
             }
         })
 
@@ -51,6 +58,18 @@ class HomeFragment : Fragment() {
         (context as AppCompatActivity).supportActionBar?.title = getString(R.string.dashboard)
 
         return rootView
+    }
+
+    //-------------------- SHOW NO DEVICE --------------------//
+    private fun showNoDevicePrompt() {
+        rootView.noDeviceView.visibility = View.VISIBLE
+        rootView.deviceList.visibility = View.GONE
+    }
+
+    //--------------------- HIDE NO DEVICE ----------------------//
+    private fun hideNoDevicePrompt() {
+        rootView.noDeviceView.visibility = View.GONE
+        rootView.deviceList.visibility = View.VISIBLE
     }
 
     //----------------- NAVIGATE TO REGISTER -------------------//
