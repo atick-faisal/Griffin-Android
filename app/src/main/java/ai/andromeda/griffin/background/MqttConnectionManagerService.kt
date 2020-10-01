@@ -5,6 +5,7 @@ import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.ALERT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.ALERT_NOTIFICATION_TITLE
 import ai.andromeda.griffin.config.Config.CHANNEL_ID
+import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.GLOBAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
@@ -96,7 +97,8 @@ class MqttConnectionManagerService : Service() {
                         showMessage(applicationContext, "MQTT CONNECTED!")
                         showPersistentNotification(getString(R.string.device_online))
                         Log.i(LOG_TAG, "SERVICE: MQTT CONNECTED!")
-                        subscribe(SUBSCRIPTION_TOPIC)
+                        subscribeToAllDevice()
+                        subscribe(SUBSCRIPTION_TOPIC) // TODO REMOVE THIS
                     }
 
                     override fun onFailure(
@@ -149,7 +151,17 @@ class MqttConnectionManagerService : Service() {
     }
 
     //------------------------- SUBSCRIBE TO ALL -----------------------//
-    // TODO SUBSCRIBE TO ALL TOPICS
+    private fun subscribeToAllDevice() {
+        val deviceIds = SharedPreferencesManager.getString(applicationContext, DEVICE_ID_KEY)
+        deviceIds?.let {
+            val deviceIdList = deviceIds.split(",")
+            Log.i(LOG_TAG, "SERVICE: DEVICE LIST -> $deviceIdList")
+            for (deviceId in deviceIdList) {
+                subscribe("Pub/$deviceId")
+            }
+            showMessage(applicationContext, "SERVICE: SUBSCRIBED TO ALL")
+        }
+    }
 
     //-------------------------- SUBSCRIBE() -----------------------//
     private fun subscribe(topic: String) {
@@ -160,7 +172,6 @@ class MqttConnectionManagerService : Service() {
                 //------------- SUBSCRIPTION SUCCESSFUL---------------//
                 override fun onSuccess(asyncActionToken: IMqttToken) {
                     Log.i(LOG_TAG, "SERVICE: SUBSCRIBED TO : $topic")
-                    showMessage(applicationContext, "SUBSCRIBED TO : $topic")
                 }
 
                 //------------- SUBSCRIPTION FAILED -----------//

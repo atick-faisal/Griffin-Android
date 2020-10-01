@@ -16,4 +16,5 @@ object Config {
     const val CHANNEL_ID = "MQTT_SERVICE_ID"
     const val WORK_NAME = "GRIFFIN_MQTT_SERVICE_WORK"
     const val WORK_REPEAT_PERIOD = 15L
+    const val DEVICE_ID_KEY = "GRIFFIN_DEVICE_IDS"
 }

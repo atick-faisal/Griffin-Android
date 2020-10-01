@@ -1,6 +1,7 @@
 package ai.andromeda.griffin.register
 
 import ai.andromeda.griffin.config.Config
+import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
@@ -63,7 +64,8 @@ class RegisterViewModel(application: Application) :
                 }
                 //-------------------- CLIENT CALLBACKS -------------------//
                 client.setCallback(object : MqttCallback {
-                    override fun messageArrived(topic: String?, message: MqttMessage?
+                    override fun messageArrived(
+                        topic: String?, message: MqttMessage?
                     ) {
                         // TODO CHECK FOR SUCCESSFUL REGISTRATION
                         Log.i(LOG_TAG, "REGISTER_VM: MESSAGE : " + message.toString())
@@ -146,6 +148,7 @@ class RegisterViewModel(application: Application) :
     private fun onConnectionSuccessful() {
         _connectionSuccessful.value = true
     }
+
     fun doneShowingViews() {
         _connectionSuccessful.value = null
     }
@@ -182,6 +185,16 @@ class RegisterViewModel(application: Application) :
                 getApplication(), deviceId, deviceName.toString()
             )
         }
+
+        //------------------------- SAVE DEVICE ID ------------------------//
+        var allId = SharedPreferencesManager.getString(getApplication(), DEVICE_ID_KEY)
+        allId = if (allId != null) {
+            "$allId,$deviceId"
+        } else {
+            "$deviceId"
+        }
+        SharedPreferencesManager.putString(getApplication(), DEVICE_ID_KEY, allId)
+
         Log.i(LOG_TAG, "REGISTER_VM: WRITING TO SP")
     }
 
