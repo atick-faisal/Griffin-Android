@@ -1,8 +1,9 @@
 package ai.andromeda.griffin
 
 import ai.andromeda.griffin.background.MqttWorker
-import ai.andromeda.griffin.config.Config.CHANNEL_ID
+import ai.andromeda.griffin.config.Config.ALERT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.LOG_TAG
+import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.WORK_NAME
 import ai.andromeda.griffin.config.Config.WORK_REPEAT_PERIOD
 import android.app.Application
@@ -34,19 +35,24 @@ class App : Application() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                CHANNEL_ID,
+            val persistentNotificationChannel = NotificationChannel(
+                PERSISTENT_CHANNEL_ID,
                 "MQTT SERVICE CHANNEL",
                 NotificationManager.IMPORTANCE_LOW
+            )
+
+            val alertNotificationChannel = NotificationChannel(
+                ALERT_CHANNEL_ID,
+                "ALERT NOTIFICATION CHANNEL",
+                NotificationManager.IMPORTANCE_HIGH
             )
 
             val notificationManager = getSystemService(
                 NotificationManager::class.java
             )
 
-            notificationManager.createNotificationChannel(
-                notificationChannel
-            )
+            notificationManager.createNotificationChannel(persistentNotificationChannel)
+            notificationManager.createNotificationChannel(alertNotificationChannel)
         }
     }
 
@@ -61,10 +67,10 @@ class App : Application() {
             .setConstraints(constraints)
             .build()
 
-        Log.i(LOG_TAG, "MQTT SERVICE IS SCHEDULED")
+        Log.i(LOG_TAG, "APP: MQTT SERVICE IS SCHEDULED")
         WorkManager.getInstance().enqueueUniquePeriodicWork(
             WORK_NAME,
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
     }

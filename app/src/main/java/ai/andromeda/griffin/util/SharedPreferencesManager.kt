@@ -14,9 +14,19 @@ object SharedPreferencesManager {
         return getSharedPreferences(context).getString(key, null)
     }
 
+    fun getLong(context: Context, key: String): Long {
+        return getSharedPreferences(context).getLong(key, 0L)
+    }
+
     fun putString(context: Context, key: String, newValue: String) {
         val editor = getSharedPreferences(context).edit()
         editor.putString(key, newValue)
+        editor.apply()
+    }
+
+    fun putLong(context: Context, key: String, newValue: Long) {
+        val editor = getSharedPreferences(context).edit()
+        editor.putLong(key, newValue)
         editor.apply()
     }
 }

@@ -6,6 +6,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".home.HomeFragment">
 
+    <RelativeLayout
+        android:id="@+id/noDeviceView"
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:padding="24dp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/emptyListImage"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            app:srcCompat="@drawable/ic_list_empty"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/noDeviceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/emptyListImage"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/no_device_found"
+            android:textSize="32sp" />
+
+        <TextView
+            android:id="@+id/instructionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/noDeviceText"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/new_device_instruction"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/deviceList"
         android:layout_width="match_parent"
@@ -13,6 +50,7 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:paddingTop="8dp"
+        android:visibility="gone"
         tools:listitem="@layout/device_list_item"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

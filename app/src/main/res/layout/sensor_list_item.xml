@@ -13,21 +13,28 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/sensorNameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="SENSOR 1"
-            android:textColor="#212121"
-            android:textSize="18sp" />
-
-        <TextView
             android:id="@+id/sensorStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sensorNameText"
-            tools:text="SENSOR 1"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp" />
+            android:background="@drawable/green_pill"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="2dp"
+            android:textSize="14sp"
+            tools:text="SENSOR 1" />
+
+        <TextView
+            android:id="@+id/sensorNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_below="@+id/sensorStatusText"
+            android:textColor="#424242"
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            tools:text="SENSOR 1" />
 
         <ImageView
             android:id="@+id/nameEditButton"
@@ -40,7 +47,7 @@
             android:id="@+id/sensorStatusImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sensorStatusText"
+            android:layout_below="@+id/sensorNameText"
             android:layout_margin="8dp"
             android:src="@drawable/red_circle" />
 
