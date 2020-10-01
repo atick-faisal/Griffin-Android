@@ -13,7 +13,8 @@ object Config {
     const val PERSISTENT_NOTIFICATION_ID = 10010
     const val ALERT_NOTIFICATION_TITLE = "Security Alert!"
     const val ALERT_NOTIFICATION_ID = 191919
-    const val CHANNEL_ID = "MQTT_SERVICE_ID"
+    const val PERSISTENT_CHANNEL_ID = "MQTT_SERVICE_ID"
+    const val ALERT_CHANNEL_ID = "ALERT_SERVICE_ID"
     const val WORK_NAME = "GRIFFIN_MQTT_SERVICE_WORK"
     const val WORK_REPEAT_PERIOD = 15L
     const val DEVICE_ID_KEY = "GRIFFIN_DEVICE_IDS"

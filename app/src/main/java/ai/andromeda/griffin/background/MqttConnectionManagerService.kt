@@ -2,12 +2,13 @@ package ai.andromeda.griffin.background
 
 import ai.andromeda.griffin.MainActivity
 import ai.andromeda.griffin.R
+import ai.andromeda.griffin.config.Config.ALERT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.ALERT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.ALERT_NOTIFICATION_TITLE
-import ai.andromeda.griffin.config.Config.CHANNEL_ID
 import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.GLOBAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
+import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_TITLE
 import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
@@ -66,10 +67,10 @@ class MqttConnectionManagerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Has to display notification in order to keep the service alive
         if (!client.isConnected) {
-            showPersistentNotification(getString(R.string.device_offline_warning))
+            showPersistentNotification(getString(R.string.device_offline_warning), false)
             this.connect(client)
         } else {
-            showPersistentNotification(getString(R.string.device_online))
+            showPersistentNotification(getString(R.string.device_online), true)
         }
         return START_STICKY
     }
@@ -95,7 +96,7 @@ class MqttConnectionManagerService : Service() {
                 token.actionCallback = object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken) {
                         showMessage(applicationContext, "MQTT CONNECTED!")
-                        showPersistentNotification(getString(R.string.device_online))
+                        showPersistentNotification(getString(R.string.device_online), true)
                         Log.i(LOG_TAG, "SERVICE: MQTT CONNECTED!")
                         subscribeToAllDevice()
                         subscribe(SUBSCRIPTION_TOPIC) // TODO REMOVE THIS
@@ -131,7 +132,7 @@ class MqttConnectionManagerService : Service() {
                     //--------------- CONNECTION LOST --------------------//
                     override fun connectionLost(cause: Throwable?) {
                         showPersistentNotification(
-                            getString(R.string.device_offline_warning)
+                            getString(R.string.device_offline_warning), false
                         )
                         showMessage(applicationContext, "CONNECTION LOST")
                         Log.i(LOG_TAG, "SERVICE: CONNECTION LOST")
@@ -157,7 +158,9 @@ class MqttConnectionManagerService : Service() {
             val deviceIdList = deviceIds.split(",")
             Log.i(LOG_TAG, "SERVICE: DEVICE LIST -> $deviceIdList")
             for (deviceId in deviceIdList) {
-                subscribe("Pub/$deviceId")
+                if (deviceId.isNotEmpty()) {
+                    subscribe("Pub/$deviceId")
+                }
             }
             showMessage(applicationContext, "SERVICE: SUBSCRIBED TO ALL")
         }
@@ -279,16 +282,22 @@ class MqttConnectionManagerService : Service() {
     }
 
     //---------------------- PERSISTENT NOTIFICATION ----------------------//
-    private fun showPersistentNotification(content: String) {
+    private fun showPersistentNotification(content: String, connected: Boolean) {
         // TODO ADD INTENT FOR MAIN ACTIVITY
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, 0
         )
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, PERSISTENT_CHANNEL_ID)
             .setContentTitle(PERSISTENT_NOTIFICATION_TITLE)
             .setContentText(content)
-            .setSmallIcon(R.drawable.ic_secure)
+            .setSmallIcon(
+                when {
+                    connected -> R.drawable.ic_secure
+                    else -> R.drawable.ic_error
+                }
+
+            )
             .setContentIntent(pendingIntent)
             .build()
 
@@ -301,7 +310,7 @@ class MqttConnectionManagerService : Service() {
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, 0
         )
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
             .setContentTitle(ALERT_NOTIFICATION_TITLE)
             .setContentText(content)
             .setSmallIcon(R.drawable.ic_secure)

@@ -1,58 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".scanner.ScannerFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_marginTop="32dp">
+
+        <ImageView
+            android:id="@+id/scanImage"
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/scan_qr" />
 
         <TextView
             android:id="@+id/deviceNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:text="@string/scanning"
-            android:fontFamily="@font/roboto_light"
+            android:layout_below="@id/scanImage"
             android:layout_centerHorizontal="true"
-            android:textColor="#212121"/>
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/scanning"
+            android:textColor="#212121"
+            android:textSize="24sp" />
 
         <androidx.camera.view.PreviewView
             android:id="@+id/viewFinder"
             android:layout_width="240dp"
             android:layout_height="240dp"
-            android:layout_marginTop="16dp"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/deviceNameText"
-            android:background="#424242"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:background="#424242" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/tryAgainButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/viewFinder"
             android:layout_centerHorizontal="true"
-            android:orientation="horizontal">
+            android:layout_marginTop="16dp"
+            android:enabled="false"
+            android:text="@string/try_again" />
 
-            <Button
-                android:id="@+id/tryAgainButton"
-                android:enabled="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/try_again"/>
-
-            <Button
-                android:id="@+id/addDeviceButton"
-                android:enabled="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/add_device"/>
-
-        </LinearLayout>
+        <Button
+            android:id="@+id/addDeviceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tryAgainButton"
+            android:layout_centerHorizontal="true"
+            android:enabled="false"
+            android:text="@string/add_device" />
 
     </RelativeLayout>
 

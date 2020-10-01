@@ -1,6 +1,7 @@
 package ai.andromeda.griffin.device
 
 import ai.andromeda.griffin.background.MqttConnectionManagerService
+import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
@@ -30,6 +31,11 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     private lateinit var mqttService: MqttConnectionManagerService
     private lateinit var client: MqttAndroidClient
     var mBound: Boolean = false
+
+    //--------------------- COUNTER -----------------------//
+    private var count = SharedPreferencesManager.getLong(
+        application, "$deviceId/count"
+    )
 
     // ----------------- LIVE DATA VARIABLES -----------------//
 
@@ -160,7 +166,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
         val payload = JSONObject()
         try {
             payload.put("Device_ID", deviceId)
-            payload.put("Count", 0) // TODO COUNT
+            payload.put("Count", ++count)
             payload.put("Command", "Control")
             payload.put("Number_of_Sensors", numberOfSensors)
             payload.put("Sensors", sensors.map {
@@ -222,17 +228,34 @@ class DeviceViewModel(application: Application, val deviceId: String) :
 
     //----------- REMOVING DEVICE FROM DATABASE --------- //
     fun removeDevice() {
+        removeIdFromSharedPreferences()
         viewModelScope.launch {
             delete(deviceId)
         }
     }
+
+    private fun removeIdFromSharedPreferences() {
+        val deviceIds = SharedPreferencesManager.getString(getApplication(), DEVICE_ID_KEY)
+        deviceIds?.let {
+            val newDeviceIds = deviceIds.replace(deviceId, "")
+            SharedPreferencesManager.putString(getApplication(), DEVICE_ID_KEY, newDeviceIds)
+            Log.i(LOG_TAG, "DEVICE_VM: NEW IDS -> $newDeviceIds")
+        }
+    }
+
     private suspend fun delete(deviceId: String) {
         database.delete(deviceId)
+    }
+
+    //------------------------ SAVE COUNT -----------------------//
+    private fun saveCount() {
+        SharedPreferencesManager.putLong(getApplication(), "$deviceId/count", count)
     }
 
     // ---------- ON_CLEARED() -----------//
     override fun onCleared() {
         super.onCleared()
+        saveCount()
         Log.i(LOG_TAG, "DEVICE_VM: VIEW MODEL CLEARED")
     }
 }

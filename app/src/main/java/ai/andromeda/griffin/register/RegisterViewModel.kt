@@ -33,6 +33,11 @@ class RegisterViewModel(application: Application) :
     val connectionSuccessful: LiveData<Boolean>
         get() = _connectionSuccessful
 
+    //--------------------- COUNTER -----------------------//
+    private var count = SharedPreferencesManager.getLong(
+        application, "REG_COUNT"
+    )
+
     init {
         _connectionSuccessful.value = null
     }
@@ -135,7 +140,7 @@ class RegisterViewModel(application: Application) :
         val payload = JSONObject()
         try {
             payload.put("Device_ID", data.deviceId)
-            payload.put("Count", 0) // TODO IMPLEMENT COUNT
+            payload.put("Count", ++count)
             payload.put("Command", "Configuration")
             payload.put("AP_SSID", data.ssid)
             payload.put("AP_Password", data.password)
@@ -204,9 +209,15 @@ class RegisterViewModel(application: Application) :
         Log.i(LOG_TAG, "REGISTER_VM: WRITING TO SP")
     }
 
+    //------------------------ SAVE COUNT -----------------------//
+    private fun saveCount() {
+        SharedPreferencesManager.putLong(getApplication(), "REG_COUNT", count)
+    }
+
     //---------------- ON_CLEARED() -------------//
     override fun onCleared() {
         super.onCleared()
+        saveCount()
         client.close()
         Log.i(LOG_TAG, "REGISTER_VM: CLIENT CLEARED")
     }
