@@ -6,14 +6,10 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 
-class HomeViewModel(deviceDatabase: DeviceDatabase, application: Application) :
+class HomeViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    val database = deviceDatabase.deviceDao
+    //----------------- LOAD DEVICE LIST LIVE DATA ------------------//
+    val database = DeviceDatabase.getInstance(application).deviceDao
     val deviceList = database.getAll()
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.i(LOG_TAG, "HOME_VM: HOME VIEW MODEL CLEARED")
-    }
 }
