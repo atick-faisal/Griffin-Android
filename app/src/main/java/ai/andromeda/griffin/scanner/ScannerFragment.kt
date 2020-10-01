@@ -1,17 +1,16 @@
 package ai.andromeda.griffin.scanner
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -21,6 +20,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -32,6 +32,7 @@ import com.google.mlkit.vision.common.InputImage
 import kotlinx.android.synthetic.main.fragment_scanner.view.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 typealias QrListener = (result: String?) -> Unit
 
 class ScannerFragment : Fragment() {
@@ -62,8 +63,7 @@ class ScannerFragment : Fragment() {
         scannerViewModel = ViewModelProvider(this, scannerViewModelFactory)
             .get(ScannerViewModel::class.java)
 
-        (context as AppCompatActivity).supportActionBar?.title =
-            getString(R.string.qr_scanner)
+        (context as AppCompatActivity).supportActionBar?.title = getString(R.string.qr_scanner)
 
         scannerViewModel.deviceName.observe(viewLifecycleOwner, Observer {
             it?.let {

@@ -11,7 +11,6 @@ import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_TITLE
-import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
 import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
@@ -95,7 +94,7 @@ class MqttConnectionManagerService : Service() {
                 //-------------------- CONNECTION CALLBACK -------------------//
                 token.actionCallback = object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken) {
-                        showMessage(applicationContext, "MQTT CONNECTED!")
+                        showMessage(applicationContext, "CONNECTED!")
                         showPersistentNotification(getString(R.string.device_online), true)
                         Log.i(LOG_TAG, "SERVICE: MQTT CONNECTED!")
                         subscribeToAllDevice()
@@ -198,7 +197,7 @@ class MqttConnectionManagerService : Service() {
             if (client.isConnected) {
                 val encodedPayload = payload.toByteArray(charset("UTF-8"))
                 val message = MqttMessage(encodedPayload)
-                client.publish(PUBLISH_TOPIC, message) // TODO FIX TOPIC
+                client.publish(topic, message)
                 showMessage(applicationContext, "COMMAND SENT")
                 Log.i(LOG_TAG, "SERVICE: PUBLISH -> $payload")
             }
@@ -283,7 +282,6 @@ class MqttConnectionManagerService : Service() {
 
     //---------------------- PERSISTENT NOTIFICATION ----------------------//
     private fun showPersistentNotification(content: String, connected: Boolean) {
-        // TODO ADD INTENT FOR MAIN ACTIVITY
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, 0

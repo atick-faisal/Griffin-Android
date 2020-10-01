@@ -4,6 +4,7 @@ import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
+import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.util.SharedPreferencesManager
@@ -123,7 +124,7 @@ class RegisterViewModel(application: Application) :
                 if (client.isConnected) {
                     val encodedPayload = payload.toByteArray(charset("UTF-8"))
                     val message = MqttMessage(encodedPayload)
-                    client.publish(Config.PUBLISH_TOPIC, message)
+                    client.publish(PUBLISH_TOPIC, message)
                     showMessage(getApplication(), "REGISTERED")
                     Log.i(LOG_TAG, "REGISTER_VM: PUBLISH -> $payload")
                 }

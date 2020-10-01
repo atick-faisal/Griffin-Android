@@ -35,7 +35,7 @@
     <string name="add_device">Add Device</string>
     <string name="try_again">Try Again</string>
     <string name="done">Done</string>
-    <string name="sensor_breach">A Security Breach Occurred in: %s</string>
+    <string name="sensor_breach">A Security Breach Occurred in %s</string>
     <string name="sensors">Sensors</string>
     <string name="delete">Delete</string>
     <string name="delete_this_device">Delete This Device</string>
