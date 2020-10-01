@@ -1,103 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="32dp"
-    android:paddingRight="32dp"
     tools:context=".register.RegisterFragment">
 
-    <RelativeLayout
-        android:id="@+id/registrationForm"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/registerText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/roboto_light"
-            android:text="@string/register_device"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/deviceNameInput"
+        <RelativeLayout
+            android:id="@+id/registrationForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/registerText"
-            android:layout_marginTop="24dp"
-            android:hint="@string/device_name"
-            android:inputType="text" />
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:visibility="visible">
 
-        <EditText
-            android:id="@+id/ssidInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/deviceNameInput"
-            android:hint="@string/ssid"
-            android:inputType="text" />
+            <ImageView
+                android:id="@+id/registerImage"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                app:srcCompat="@drawable/ic_smart_home" />
 
-        <EditText
-            android:id="@+id/passwordInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ssidInput"
-            android:hint="@string/password"
-            android:inputType="textWebPassword" />
+            <!--            <TextView-->
+            <!--                android:id="@+id/registerText"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_centerHorizontal="true"-->
+            <!--                android:layout_marginTop="24dp"-->
+            <!--                android:fontFamily="@font/roboto_light"-->
+            <!--                android:text="@string/register_device"-->
+            <!--                android:textSize="24sp" />-->
 
-        <EditText
-            android:id="@+id/contact1Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/passwordInput"
-            android:hint="@string/contact_1"
-            android:inputType="phone" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/deviceNameInputField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/registerImage"
+                android:layout_marginTop="24dp"
+                android:hint="@string/device_name"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_device">
 
-        <EditText
-            android:id="@+id/contact2Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/contact1Input"
-            android:hint="@string/contact_2"
-            android:inputType="phone" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/deviceNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
 
-        <EditText
-            android:id="@+id/contact3Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/contact2Input"
-            android:hint="@string/contact_3"
-            android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/sensorNumberInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/contact3Input"
-            android:hint="@string/number_of_sensors"
-            android:inputType="numberDecimal" />
+            <!--            <EditText-->
+            <!--                android:id="@+id/deviceNameInput"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@+id/registerText"-->
+            <!--                android:layout_marginTop="24dp"-->
+            <!--                android:hint="@string/device_name"-->
+            <!--                android:inputType="text" />-->
 
-        <EditText
-            android:id="@+id/additionalInfoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/sensorNumberInput"
-            android:hint="@string/additional_information"
-            android:inputType="text" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ssidInputField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/deviceNameInputField"
+                android:hint="@string/ssid"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_ssid">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ssidInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--            <EditText-->
+            <!--                android:id="@+id/"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@+id/deviceNameInputField"-->
+            <!--                android:hint="@string/ssid"-->
+            <!--                android:inputType="text" />-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordInputField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ssidInputField"
+                android:hint="@string/password"
+                app:endIconMode="password_toggle"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_wifi_password">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--            <EditText-->
+            <!--                android:id="@+id/"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@+id/ssidInputField"-->
+            <!--                android:hint="@string/password"-->
+            <!--                android:inputType="textWebPassword" />-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/contact1InputField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/passwordInputField"
+                android:hint="@string/contact_1"
+                app:counterEnabled="true"
+                app:counterMaxLength="11"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_phone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/contact1Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--            <EditText-->
+            <!--                android:id="@+id/contact1Input"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@id/passwordInputField"-->
+            <!--                android:hint="@string/contact_1"-->
+            <!--                android:inputType="phone" />-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/contact2InputField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/contact1InputField"
+                android:hint="@string/contact_2"
+                app:counterEnabled="true"
+                app:counterMaxLength="11"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_phone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/contact2Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--            <EditText-->
+            <!--                android:id="@+id/contact2Input"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@id/contact1InputField"-->
+            <!--                android:hint="@string/contact_2"-->
+            <!--                android:inputType="phone" />-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/contact3InputField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/contact2InputField"
+                android:hint="@string/contact_3"
+                app:counterEnabled="true"
+                app:counterMaxLength="11"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_phone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/contact3Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-        <Button
-            android:id="@+id/registerButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/additionalInfoText"
-            android:layout_marginTop="24dp"
-            android:text="@string/register" />
+            <!--            <EditText-->
+            <!--                android:id="@+id/contact3Input"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@id/contact2InputField"-->
+            <!--                android:hint="@string/contact_3"-->
+            <!--                android:inputType="phone" />-->
 
-    </RelativeLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/sensorNumberInputField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/contact3InputField"
+                android:hint="@string/number_of_sensors"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_sensors">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/sensorNumberInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--            <EditText-->
+            <!--                android:id="@+id/sensorNumberInput"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@id/contact3InputField"-->
+            <!--                android:hint="@string/number_of_sensors"-->
+            <!--                android:inputType="numberDecimal" />-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/additionalInfoTextField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sensorNumberInputField"
+                android:hint="@string/additional_information"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_additional_info">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/additionalInfoText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!--            <EditText-->
+            <!--                android:id="@+id/additionalInfoText"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@id/sensorNumberInputField"-->
+            <!--                android:hint="@string/additional_information"-->
+            <!--                android:inputType="text" />-->
+
+
+            <Button
+                android:id="@+id/registerButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/additionalInfoTextField"
+                android:layout_marginTop="8dp"
+                android:text="@string/register" />
+
+            <Button
+                android:id="@+id/cancelButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/registerButton"
+                android:layout_marginBottom="16dp"
+                android:text="@string/cancel" />
+
+        </RelativeLayout>
+
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/noConnectionView"
@@ -105,14 +283,16 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/noConnectionIcon"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_plug" />
+            app:srcCompat="@drawable/ic_no_connection" />
 
         <TextView
             android:id="@+id/noConnectionText"
@@ -121,7 +301,7 @@
             android:layout_below="@+id/noConnectionIcon"
             android:layout_centerHorizontal="true"
             android:fontFamily="@font/roboto_light"
-            android:text="@string/no_connection"
+            android:text="@string/whooops"
             android:textSize="32sp" />
 
         <TextView

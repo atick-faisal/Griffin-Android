@@ -11,14 +11,14 @@
     <string name="retry">Retry</string>
     <string name="register_device">Register Device</string>
     <string name="device_name">Device Name</string>
-    <string name="ssid">SSID</string>
-    <string name="password">Password</string>
+    <string name="ssid">WiFi SSID</string>
+    <string name="password">WiFi Password</string>
     <string name="contact_1">Contact 1</string>
     <string name="contact_2">Contact 2 (Optional)</string>
     <string name="contact_3">Contact 3 (Optional)</string>
     <string name="number_of_sensors">Number of Sensors</string>
     <string name="register">Register</string>
-    <string name="additional_information">Additional Information (Optional)</string>
+    <string name="additional_information">Additional Info (Optional)</string>
     <string name="open">%d OPEN</string>
     <string name="locked">%d LOCKED</string>
     <string name="dashboard">Dashboard</string>
@@ -31,7 +31,7 @@
     <string name="save">Save</string>
     <string name="scan">Scan</string>
     <string name="qr_scanner">QR Scanner</string>
-    <string name="scanning">Scanning...</string>
+    <string name="scanning">Scanning…</string>
     <string name="add_device">Add Device</string>
     <string name="try_again">Try Again</string>
     <string name="done">Done</string>
@@ -46,4 +46,6 @@
     <string name="empty_field_warning">Field can\'t be Empty</string>
     <string name="locked_status">LOCKED</string>
     <string name="unlocked_status">OPEN</string>
+    <string name="whooops">Whooops!</string>
+    <string name="too_many_sensors">Too Many Sensors</string>
 </resources>

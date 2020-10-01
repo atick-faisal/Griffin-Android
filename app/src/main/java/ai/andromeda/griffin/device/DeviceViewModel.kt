@@ -3,6 +3,7 @@ package ai.andromeda.griffin.device
 import ai.andromeda.griffin.background.MqttConnectionManagerService
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
+import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.database.SensorModel
 import ai.andromeda.griffin.util.SharedPreferencesManager
 import ai.andromeda.griffin.util.showMessage
@@ -12,6 +13,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.json.JSONException
@@ -95,6 +98,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
 
                     //------------- SAVING NEW STATUS -----------//
                     writeToSharedPreferences()
+                    updateDatabase()
                     _sensorList.value = sensors
 
                     // --------- PUBLISH DATA --------//
@@ -184,6 +188,34 @@ class DeviceViewModel(application: Application, val deviceId: String) :
         }
         SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
+    }
+
+    //------------------------- UPDATE_DATABASE() ------------------------//
+    private fun updateDatabase() {
+        val sensorValues = sensors.map { it.sensorStatus }
+        Log.i(LOG_TAG, "DEVICE_VM: SENSOR VALUES -> $sensorValues")
+        val lockedSensors = sensorValues.size - sensorValues.sum()
+        CoroutineScope(Dispatchers.IO).launch {
+            val device = get(deviceId)
+            device?.let {
+                if (sensorValues.size == device.numSensors) {
+                    if (lockedSensors >= 0) {
+                        device.lockedSensors = lockedSensors
+                        update(device)
+                        Log.i(LOG_TAG, "SERVICE: WRITING SENSOR VALUES TO DB")
+                    }
+                }
+            }
+        }
+    }
+
+    // --------------- DATABASE SUSPEND METHODS ------------------//
+    private suspend fun update(device: DeviceEntity) {
+        database.update(device)
+    }
+
+    private suspend fun get(deviceId: String): DeviceEntity? {
+        return database.get(deviceId)
     }
 
     //----------- REMOVING DEVICE FROM DATABASE --------- //

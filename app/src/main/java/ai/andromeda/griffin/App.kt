@@ -64,7 +64,7 @@ class App : Application() {
         Log.i(LOG_TAG, "APP: MQTT SERVICE IS SCHEDULED")
         WorkManager.getInstance().enqueueUniquePeriodicWork(
             WORK_NAME,
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
     }
