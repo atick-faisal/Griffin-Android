@@ -1,17 +1,12 @@
 package ai.andromeda.griffin
 
 import ai.andromeda.griffin.background.MqttConnectionManagerService
-import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.scanner.ScannerFragment
 import ai.andromeda.griffin.util.showMessage
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -53,7 +48,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startMqttService() {
-        Log.i(LOG_TAG, null.toString())
         val intent = Intent(
             this@MainActivity, MqttConnectionManagerService::class.java
         )
