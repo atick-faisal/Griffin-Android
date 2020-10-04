@@ -7,10 +7,12 @@ import ai.andromeda.griffin.config.Config.ALERT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.ALERT_NOTIFICATION_TITLE
 import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.GLOBAL_BROKER_IP
+import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_TITLE
+import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
 import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
@@ -26,10 +28,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,6 +42,10 @@ class MqttConnectionManagerService : Service() {
 
     lateinit var client: MqttAndroidClient
     private lateinit var deviceDatabase: DeviceDatabase
+
+    private var isConnectedLocally = false
+    private var triedConnectingGlobally = true
+    private var connecting = false
 
     // Service Binder Instance
     private val binder = LocalBinder()
@@ -62,7 +64,7 @@ class MqttConnectionManagerService : Service() {
 
         // Only create client and database instance once when service started
         deviceDatabase = DeviceDatabase.getInstance(this.applicationContext)
-        client = createMqttAndroidClient()
+        client = createMqttAndroidClient(GLOBAL_BROKER_IP)
 
         Log.i(LOG_TAG, "SERVICE: NEW MQTT CLIENT CREATED!")
     }
@@ -70,9 +72,10 @@ class MqttConnectionManagerService : Service() {
     //---------------------------- ON_START_COMMAND() -------------------------//
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Has to display notification in order to keep the service alive
-        if (!client.isConnected) {
+        if (!client.isConnected  && !connecting) {
             showPersistentNotification(getString(R.string.device_offline_warning), false)
-            this.connect(client)
+            resetClient()
+            connect(client)
         } else {
             showPersistentNotification(getString(R.string.device_online), true)
         }
@@ -85,20 +88,22 @@ class MqttConnectionManagerService : Service() {
     }
 
     //----------------------- CREATE_MQTT_CLIENT() ------------------------//
-    private fun createMqttAndroidClient(): MqttAndroidClient {
+    private fun createMqttAndroidClient(brokerIp: String): MqttAndroidClient {
         val clientId = MqttClient.generateClientId()
-        return MqttAndroidClient(this.applicationContext, GLOBAL_BROKER_IP, clientId)
+        return MqttAndroidClient(this.applicationContext, brokerIp, clientId)
     }
 
     //----------------------------- CONNECT() ----------------------------//
     private fun connect(client: MqttAndroidClient) {
         try {
             if (!client.isConnected) {
+                connecting = true
                 val token = client.connect()
 
                 //-------------------- CONNECTION CALLBACK -------------------//
                 token.actionCallback = object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken) {
+                        connecting = false
                         showMessage(applicationContext, "CONNECTED!")
                         showPersistentNotification(getString(R.string.device_online), true)
                         Log.i(LOG_TAG, "SERVICE: MQTT CONNECTED!")
@@ -110,8 +115,12 @@ class MqttConnectionManagerService : Service() {
                         asyncActionToken: IMqttToken,
                         exception: Throwable
                     ) {
+                        connecting = false
                         showMessage(applicationContext, "CANNOT CONNECT!")
                         Log.i(LOG_TAG, "SERVICE: CANNOT CONNECT!")
+                        if (!isConnectedLocally) {
+                            tryConnectingLocally()
+                        }
                         // stopService()
                     }
                 }
@@ -135,6 +144,7 @@ class MqttConnectionManagerService : Service() {
 
                     //--------------- CONNECTION LOST --------------------//
                     override fun connectionLost(cause: Throwable?) {
+                        connecting = false
                         showPersistentNotification(
                             getString(R.string.device_offline_warning), false
                         )
@@ -150,6 +160,7 @@ class MqttConnectionManagerService : Service() {
         }
         // --------------------- CONNECTION ERROR --------------------//
         catch (e: MqttException) {
+            connecting = false
             showMessage(applicationContext, "ERROR WHILE CONNECTING")
             Log.i(LOG_TAG, "ERROR WHILE CONNECTING")
             // stopService()
@@ -289,6 +300,7 @@ class MqttConnectionManagerService : Service() {
     //---------------------- PERSISTENT NOTIFICATION ----------------------//
     private fun showPersistentNotification(content: String, connected: Boolean) {
         val notificationIntent = Intent(this, MainActivity::class.java)
+        notificationIntent.putExtra(RESTART_REQUEST_KEY, true)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, 0
         )
@@ -323,6 +335,26 @@ class MqttConnectionManagerService : Service() {
 
         with(NotificationManagerCompat.from(this)) {
             notify(ALERT_NOTIFICATION_ID, notification)
+        }
+    }
+
+    //-------------------- RESET CLIENT ------------------//
+    private fun resetClient() {
+        isConnectedLocally = false
+        if (::client.isInitialized) {
+            client.close()
+            client = createMqttAndroidClient(GLOBAL_BROKER_IP)
+        }
+    }
+
+    //-------------------- TRY CONNECTING LOCALLY ------------------//
+    private fun tryConnectingLocally() {
+        Log.i(LOG_TAG, "SERVICE: CONNECTING LOCALLY")
+        isConnectedLocally = true
+        if (::client.isInitialized) {
+            client.close()
+            client = createMqttAndroidClient(LOCAL_BROKER_IP)
+            this.connect(client)
         }
     }
 

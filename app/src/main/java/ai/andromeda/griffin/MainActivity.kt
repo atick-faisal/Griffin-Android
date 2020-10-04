@@ -1,6 +1,7 @@
 package ai.andromeda.griffin
 
 import ai.andromeda.griffin.background.MqttConnectionManagerService
+import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
 import ai.andromeda.griffin.scanner.ScannerFragment
 import ai.andromeda.griffin.util.showMessage
 import android.Manifest
@@ -39,14 +40,20 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        // startMqttService() // TODO START SERVICE IN MAIN ACTIVITY
+        startMqttService()
+
+        //------------------- WHEN ACCESSED FROM NOTIFICATION ----------------//
+        val isRestartRequested: Boolean = intent.getBooleanExtra(RESTART_REQUEST_KEY, false)
+        if (isRestartRequested) { startMqttService() }
     }
 
+    //---------------- NAV DRAWER SETUP --------------//
     override fun onSupportNavigateUp(): Boolean {
         val navController = this.findNavController(R.id.navHostFragment)
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
 
+    //-------------------- START MQTT SERVICE -------------------//
     private fun startMqttService() {
         val intent = Intent(
             this@MainActivity, MqttConnectionManagerService::class.java

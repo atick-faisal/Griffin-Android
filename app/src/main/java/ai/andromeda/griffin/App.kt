@@ -1,22 +1,17 @@
 package ai.andromeda.griffin
 
-import ai.andromeda.griffin.background.MqttWorker
 import ai.andromeda.griffin.config.Config.ALERT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
-import ai.andromeda.griffin.config.Config.WORK_NAME
-import ai.andromeda.griffin.config.Config.WORK_REPEAT_PERIOD
 import ai.andromeda.griffin.util.makeMqttServiceRequest
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.util.Log
-import androidx.work.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class App : Application() {
 
@@ -24,6 +19,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.i(LOG_TAG, "APP: ON_CREATE() CALLED")
+        //createNotificationChannel()
+        //makeMqttServiceRequest()
         delayedInit()
     }
 

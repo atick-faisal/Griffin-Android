@@ -3,7 +3,9 @@ package ai.andromeda.griffin.util
 import ai.andromeda.griffin.background.MqttWorker
 import ai.andromeda.griffin.config.Config.ALLOWED_CHARACTERS
 import ai.andromeda.griffin.config.Config.ID_LENGTH
+import ai.andromeda.griffin.config.Config.LOG_TAG
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.work.Constraints
 import androidx.work.NetworkType
@@ -30,6 +32,7 @@ fun toArray(json: String): IntArray? {
 }
 
 fun makeMqttServiceRequest() {
+    Log.i(LOG_TAG, "UTIL: MQTT SERVICE REQUESTED")
     val constraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
