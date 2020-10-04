@@ -15,6 +15,7 @@ import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.util.SharedPreferencesManager
+import ai.andromeda.griffin.util.makeMqttServiceRequest
 import ai.andromeda.griffin.util.showMessage
 import ai.andromeda.griffin.util.toArray
 import android.app.PendingIntent
@@ -327,15 +328,7 @@ class MqttConnectionManagerService : Service() {
 
     //-------------------- RETRY CONNECTION ---------------------//
     private fun retryConnection() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val workRequest = OneTimeWorkRequestBuilder<MqttWorker>()
-            .setConstraints(constraints)
-            .build()
-
-        WorkManager.getInstance().enqueue(workRequest)
+        makeMqttServiceRequest()
     }
 
     override fun onDestroy() {

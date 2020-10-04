@@ -6,6 +6,7 @@ import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.WORK_NAME
 import ai.andromeda.griffin.config.Config.WORK_REPEAT_PERIOD
+import ai.andromeda.griffin.util.makeMqttServiceRequest
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -29,7 +30,7 @@ class App : Application() {
     private fun delayedInit() {
         applicationScope.launch {
             createNotificationChannel()
-            setupMqttService()
+            makeMqttServiceRequest()
         }
     }
 
@@ -56,27 +57,16 @@ class App : Application() {
         }
     }
 
-    private fun setupMqttService() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
+// TODO PERIODIC WORK
 //        val workRequest = PeriodicWorkRequestBuilder<MqttWorker>(
 //            WORK_REPEAT_PERIOD, TimeUnit.MINUTES
 //        )
 //            .setConstraints(constraints)
-//            .build() // TODO PERIODIC WORK
-
-        val workRequest = OneTimeWorkRequestBuilder<MqttWorker>()
-            .setConstraints(constraints)
-            .build()
-
+//            .build()
 //        WorkManager.getInstance().enqueueUniquePeriodicWork(
 //            WORK_NAME,
 //            ExistingPeriodicWorkPolicy.REPLACE,
 //            workRequest
 //        )
 
-        WorkManager.getInstance().enqueue(workRequest)
-    }
 }
