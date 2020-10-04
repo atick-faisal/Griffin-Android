@@ -25,6 +25,10 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -135,6 +139,7 @@ class MqttConnectionManagerService : Service() {
                         )
                         showMessage(applicationContext, "CONNECTION LOST")
                         Log.i(LOG_TAG, "SERVICE: CONNECTION LOST")
+                        retryConnection()
                         // stopService()
                     }
 
@@ -318,6 +323,19 @@ class MqttConnectionManagerService : Service() {
         with(NotificationManagerCompat.from(this)) {
             notify(ALERT_NOTIFICATION_ID, notification)
         }
+    }
+
+    //-------------------- RETRY CONNECTION ---------------------//
+    private fun retryConnection() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<MqttWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance().enqueue(workRequest)
     }
 
     override fun onDestroy() {

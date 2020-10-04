@@ -61,17 +61,22 @@ class App : Application() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val workRequest = PeriodicWorkRequestBuilder<MqttWorker>(
-            WORK_REPEAT_PERIOD, TimeUnit.MINUTES
-        )
+//        val workRequest = PeriodicWorkRequestBuilder<MqttWorker>(
+//            WORK_REPEAT_PERIOD, TimeUnit.MINUTES
+//        )
+//            .setConstraints(constraints)
+//            .build() // TODO PERIODIC WORK
+
+        val workRequest = OneTimeWorkRequestBuilder<MqttWorker>()
             .setConstraints(constraints)
             .build()
 
-        Log.i(LOG_TAG, "APP: MQTT SERVICE IS SCHEDULED")
-        WorkManager.getInstance().enqueueUniquePeriodicWork(
-            WORK_NAME,
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
-        )
+//        WorkManager.getInstance().enqueueUniquePeriodicWork(
+//            WORK_NAME,
+//            ExistingPeriodicWorkPolicy.REPLACE,
+//            workRequest
+//        )
+
+        WorkManager.getInstance().enqueue(workRequest)
     }
 }

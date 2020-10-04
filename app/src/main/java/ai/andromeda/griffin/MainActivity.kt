@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        startMqttService()
+        // startMqttService() // TODO START SERVICE IN MAIN ACTIVITY
     }
 
     override fun onSupportNavigateUp(): Boolean {
