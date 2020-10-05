@@ -51,6 +51,7 @@ class RegisterFragment : Fragment() {
         })
         registerViewModel.registrationSuccessful.observe(viewLifecycleOwner, Observer {
             it?.let {
+                registerViewModel.saveData()
                 hideProgress()
                 navigateToHome()
                 registerViewModel.doneNavigatingToHome()
@@ -150,7 +151,6 @@ class RegisterFragment : Fragment() {
                     )
                     showProgress()
                     registerViewModel.publish(data)
-                    registerViewModel.saveData(data)
                 }
             }
         }

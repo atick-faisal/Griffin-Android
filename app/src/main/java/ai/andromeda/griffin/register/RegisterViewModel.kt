@@ -29,6 +29,7 @@ class RegisterViewModel(application: Application) :
 
     private val database = DeviceDatabase.getInstance(application).deviceDao
     private lateinit var client: MqttAndroidClient
+    private lateinit var deviceEntity: DeviceEntity
 
     //--------------------- LIVE DATA --------------------//
     private val _connectionSuccessful = MutableLiveData<Boolean>()
@@ -119,6 +120,8 @@ class RegisterViewModel(application: Application) :
 
     //------------------- PUBLISH DATA -------------------//
     fun publish(data: DeviceEntity) {
+        // Saving for database operation
+        deviceEntity = data
         val payload = getJsonObject(data)
         try {
             if (::client.isInitialized) {
@@ -183,12 +186,14 @@ class RegisterViewModel(application: Application) :
     }
 
     //-------------------- DATABASE OPERATIONS -----------//
-    fun saveData(data: DeviceEntity) {
-        writeToSharedPreferences(data)
-        CoroutineScope(Dispatchers.IO).launch {
-            database.insert(data)
+    fun saveData() {
+        if (::deviceEntity.isInitialized) {
+            writeToSharedPreferences(deviceEntity)
+            CoroutineScope(Dispatchers.IO).launch {
+                database.insert(deviceEntity)
+            }
+            Log.i(LOG_TAG, "REGISTER_VM: WRITING TO DB")
         }
-        Log.i(LOG_TAG, "REGISTER_VM: WRITING TO DB")
     }
 
     //----------------- WRITING TO SP -----------------//

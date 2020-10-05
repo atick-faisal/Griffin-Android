@@ -10,7 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +22,22 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_reconfigure.view.*
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.cancelButton
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact1Input
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact1InputField
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact2Input
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact3Input
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.customMessageText
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.deviceNameInput
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.deviceNameInputField
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.passwordInput
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.passwordInputField
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.progressDialog
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.registrationForm
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.sensorNumberInput
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.sensorNumberInputField
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.ssidInput
+import kotlinx.android.synthetic.main.fragment_reconfigure.view.ssidInputField
 
 class ReconfigureFragment : Fragment() {
 
@@ -96,6 +114,16 @@ class ReconfigureFragment : Fragment() {
         rootView.customMessageText.setText(device.customMessage)
     }
 
+    //-------------------- PROGRESS DIALOG -----------------//
+    private fun showProgress() {
+        rootView.registrationForm.alpha = 0.1F
+        rootView.progressDialog.visibility = View.VISIBLE
+    }
+    private fun hideProgress() {
+        rootView.registrationForm.alpha = 1.0F
+        rootView.progressDialog.visibility = View.GONE
+    }
+
     //------------------------ REGISTER DEVICE --------------------//
     private fun saveChanges() {
         val isNameEmpty = rootView.deviceNameInput.text.toString().isEmpty()
@@ -158,10 +186,21 @@ class ReconfigureFragment : Fragment() {
                     )
                     reconfigureViewModel.updateDevice(data)
                     reconfigureViewModel.publishData(data)
-                    navigateToHome()
+                    showFakeProgress() // TODO MAKE REAL PROGRESS
+                    //navigateToHome()
+
                 }
             }
         }
+    }
+
+    //------------- FAKE PROGRESS -------------//
+    private fun showFakeProgress() {
+        showProgress()
+        Handler(Looper.getMainLooper()).postDelayed({
+            hideProgress()
+            navigateToHome()
+        }, 1000)
     }
 
     //----------- NAVIGATE BACK ---------//
