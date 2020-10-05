@@ -63,4 +63,5 @@
     <string name="delete_device">Delete Device</string>
     <string name="save_changes">Save Changes</string>
     <string name="please_wait">Please Wait...</string>
+    <string name="device_dashboard">Device Dashboard</string>
 </resources>

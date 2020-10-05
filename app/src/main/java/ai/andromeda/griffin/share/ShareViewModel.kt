@@ -3,6 +3,7 @@ package ai.andromeda.griffin.share
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
+import ai.andromeda.griffin.util.SharedPreferencesManager
 import android.app.Application
 import android.graphics.Bitmap
 import android.util.Log
@@ -32,6 +33,14 @@ class ShareViewModel(
     private val _qrBitmap = MutableLiveData<Bitmap>()
     val qrBitmap: LiveData<Bitmap>
         get() = _qrBitmap
+
+    //------------------- SENSORS ---------------------//
+    val sensorNames = SharedPreferencesManager.getString(
+        getApplication(), "$deviceId/name"
+    )
+    val sensorValues = SharedPreferencesManager.getString(
+        getApplication(), "$deviceId/value"
+    )
 
     //--------------- INIT -----------------//
     init {
@@ -71,6 +80,8 @@ class ShareViewModel(
             json.put("numSensors", device.numSensors)
             json.put("customMessage", device.customMessage)
             json.put("lockedSensors", device.lockedSensors)
+            json.put("sensorNames", sensorNames)
+            json.put("sensorValues", sensorValues)
         } catch (e: JSONException) {
             e.printStackTrace()
         }

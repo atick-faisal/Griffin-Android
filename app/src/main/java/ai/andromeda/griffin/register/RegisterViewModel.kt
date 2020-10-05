@@ -76,6 +76,7 @@ class RegisterViewModel(application: Application) :
                         topic: String?, message: MqttMessage?
                     ) {
                         if (message.toString() == "configured") {
+                            showMessage(getApplication(), "REGISTERED")
                             onRegistrationSuccessful()
                         }
                         Log.i(LOG_TAG, "REGISTER_VM: MESSAGE : " + message.toString())
@@ -129,7 +130,6 @@ class RegisterViewModel(application: Application) :
                     val encodedPayload = payload.toByteArray(charset("UTF-8"))
                     val message = MqttMessage(encodedPayload)
                     client.publish(PUBLISH_TOPIC, message)
-                    showMessage(getApplication(), "REGISTERED")
                     Log.i(LOG_TAG, "REGISTER_VM: PUBLISH -> $payload")
                 }
                 else {

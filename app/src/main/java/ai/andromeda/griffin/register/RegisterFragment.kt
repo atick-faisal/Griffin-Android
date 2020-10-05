@@ -4,11 +4,13 @@ import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.util.generateDeviceId
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -150,6 +152,7 @@ class RegisterFragment : Fragment() {
                         customMessage = customMessage
                     )
                     showProgress()
+                    hideKeyboard()
                     registerViewModel.publish(data)
                 }
             }
@@ -161,5 +164,12 @@ class RegisterFragment : Fragment() {
         findNavController().navigate(
             RegisterFragmentDirections.actionRegisterFragmentToHomeFragment()
         )
+    }
+
+    //---------------------- HIDE KEYBOARD -----------------//
+    private fun hideKeyboard() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

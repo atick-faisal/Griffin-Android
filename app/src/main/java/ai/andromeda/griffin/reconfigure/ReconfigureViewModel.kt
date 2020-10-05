@@ -32,7 +32,7 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
 
     //--------------------- COUNTER -----------------------//
     private var count = SharedPreferencesManager.getLong(
-        application, "${deviceId}/REG_COUNT" // TODO FIX REG COUNT
+        application, "${deviceId}/REG_COUNT"
     )
 
     //--------------- INIT -------------//
