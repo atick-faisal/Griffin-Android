@@ -189,6 +189,13 @@ class DeviceFragment : Fragment() {
         )
     }
 
+    //----------------------- NAVIGATE TO HOME FRAGMENT ------------------//
+    private fun navigateToReconfigure() {
+        findNavController().navigate(
+            DeviceFragmentDirections.actionDeviceDetailsFragmentToReconfigureFragment(deviceId)
+        )
+    }
+
     //------------------ CREATE MENU -------------------//
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.device_menu, menu)
@@ -207,6 +214,10 @@ class DeviceFragment : Fragment() {
             }
             R.id.deleteDevice -> {
                 showDeleteDialog()
+                true
+            }
+            R.id.editDevice -> {
+                navigateToReconfigure()
                 true
             }
             else -> super.onOptionsItemSelected(item)

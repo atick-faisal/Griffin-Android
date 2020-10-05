@@ -61,4 +61,5 @@
     <string name="custom_message_optional">Custom Message (Optional)</string>
     <string name="delete_warning">This device and all it\'s data will be lost. Are you sure you want to delete?</string>
     <string name="delete_device">Delete Device</string>
+    <string name="save_changes">Save Changes</string>
 </resources>

@@ -7,25 +7,25 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "devices")
 data class DeviceEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
+    var id: Long = 0L,
     @ColumnInfo(name = "device_id")
     val deviceId: String?,
     @ColumnInfo(name = "device_name")
-    val deviceName: String?,
+    var deviceName: String?,
     @ColumnInfo(name = "ssid")
-    val ssid: String?,
+    var ssid: String?,
     @ColumnInfo(name = "password")
-    val password: String?,
+    var password: String?,
     @ColumnInfo(name = "contact_1")
-    val contact1: String?,
+    var contact1: String?,
     @ColumnInfo(name = "contact_2")
-    val contact2: String = "",
+    var contact2: String = "",
     @ColumnInfo(name = "contact_3")
-    val contact3: String = "",
+    var contact3: String = "",
     @ColumnInfo(name = "num_sensors")
-    val numSensors: Int = 0,
+    var numSensors: Int = 0,
     @ColumnInfo(name = "additional_info")
-    val customMessage: String = "",
+    var customMessage: String = "",
     @ColumnInfo(name = "locked_sensors")
     var lockedSensors: Int = 0
 )
