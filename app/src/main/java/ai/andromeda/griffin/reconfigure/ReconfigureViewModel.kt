@@ -5,6 +5,7 @@ import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.util.SharedPreferencesManager
+import ai.andromeda.griffin.util.showMessage
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -46,11 +47,18 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
         client = service.client
     }
 
+    //---------------------- PUBLISH -------------------------//
     fun publishData(deviceEntity: DeviceEntity) {
         val payload = getPayload(deviceEntity)
         Log.i(LOG_TAG, "RECONFIGURE_VM: PAYLOAD -> $payload")
         if (mBound) {
-            mqttService.publish("Sub/$deviceId", payload)
+            if (client.isConnected) {
+                mqttService.publish("Sub/$deviceId", payload)
+            }
+            else {
+                showMessage(getApplication(), "NO CONNECTION")
+            }
+
         }
     }
 

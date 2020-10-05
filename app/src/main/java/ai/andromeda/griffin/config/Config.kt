@@ -3,7 +3,7 @@ package ai.andromeda.griffin.config
 object Config {
     const val LOG_TAG = "GRIFFIN_LOG"
     const val LOCAL_BROKER_IP = "tcp://192.168.0.105:1883" // TODO LOCAL IP
-    const val SUBSCRIPTION_TOPIC = "SUB/ESP_CONFIG"
+    const val SUBSCRIPTION_TOPIC = "Pub/Griffin0"
     const val PUBLISH_TOPIC = "Sub/Griffin0"
     const val GLOBAL_BROKER_IP = "tcp://broker.hivemq.com:1883"
     const val ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm"
@@ -19,4 +19,5 @@ object Config {
     const val WORK_REPEAT_PERIOD = 15L
     const val DEVICE_ID_KEY = "GRIFFIN_DEVICE_IDS"
     const val RESTART_REQUEST_KEY = "RESTART_MQTT"
+    const val WAIT_FOR_FEEDBACK = true
 }

@@ -4,6 +4,7 @@ import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
+import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.util.SharedPreferencesManager
@@ -22,6 +23,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 
+@Suppress("SameParameterValue")
 class RegisterViewModel(application: Application) :
     AndroidViewModel(application) {
 
@@ -33,7 +35,12 @@ class RegisterViewModel(application: Application) :
     val connectionSuccessful: LiveData<Boolean>
         get() = _connectionSuccessful
 
+    private val _registrationSuccessful = MutableLiveData<Boolean>()
+    val registrationSuccessful: LiveData<Boolean>
+        get() = _registrationSuccessful
+
     init {
+        _registrationSuccessful.value = null
         _connectionSuccessful.value = null
     }
 
@@ -50,7 +57,7 @@ class RegisterViewModel(application: Application) :
                     override fun onSuccess(asyncActionToken: IMqttToken) {
                         showMessage(getApplication(), "CONNECTED!")
                         Log.i(LOG_TAG, "REGISTER_VM: MQTT CONNECTED!")
-                        // subscribe(SUBSCRIPTION_TOPIC) // TODO SUBSCRIBE FOR CALLBACKS
+                        subscribe(SUBSCRIPTION_TOPIC)
                         onConnectionSuccessful()
                     }
 
@@ -67,7 +74,9 @@ class RegisterViewModel(application: Application) :
                     override fun messageArrived(
                         topic: String?, message: MqttMessage?
                     ) {
-                        // TODO CHECK FOR SUCCESSFUL REGISTRATION
+                        if (message.toString() == "configured") {
+                            onRegistrationSuccessful()
+                        }
                         Log.i(LOG_TAG, "REGISTER_VM: MESSAGE : " + message.toString())
                     }
 
@@ -88,27 +97,25 @@ class RegisterViewModel(application: Application) :
     }
 
     //---------------------- SUBSCRIBE -------------------//
-//    private fun subscribe(topic: String) {
-//        try {
-//            val subToken = client.subscribe(topic, 1)
-//            subToken.actionCallback = object : IMqttActionListener {
-//                override fun onSuccess(asyncActionToken: IMqttToken) {
-//                    Log.i(LOG_TAG, "SUBSCRIBED TO : $topic")
-//                    showMessage("SUBSCRIBED TO : $topic")
-//                }
-//
-//                override fun onFailure(
-//                    asyncActionToken: IMqttToken,
-//                    exception: Throwable
-//                ) {
-//                    Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
-//                    showMessage("COULD NOT SUBSCRIBE")
-//                }
-//            }
-//        } catch (e: MqttException) {
-//            e.printStackTrace()
-//        }
-//    }
+    private fun subscribe(topic: String) {
+        try {
+            val subToken = client.subscribe(topic, 1)
+            subToken.actionCallback = object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken) {
+                    Log.i(LOG_TAG, "SUBSCRIBED TO : $topic")
+                }
+
+                override fun onFailure(
+                    asyncActionToken: IMqttToken,
+                    exception: Throwable
+                ) {
+                    Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
+                }
+            }
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+    }
 
     //------------------- PUBLISH DATA -------------------//
     fun publish(data: DeviceEntity) {
@@ -121,6 +128,9 @@ class RegisterViewModel(application: Application) :
                     client.publish(PUBLISH_TOPIC, message)
                     showMessage(getApplication(), "REGISTERED")
                     Log.i(LOG_TAG, "REGISTER_VM: PUBLISH -> $payload")
+                }
+                else {
+                    showMessage(getApplication(), "NO CONNECTION")
                 }
             }
         } catch (e: UnsupportedEncodingException) {
@@ -161,6 +171,15 @@ class RegisterViewModel(application: Application) :
 
     fun doneShowingViews() {
         _connectionSuccessful.value = null
+    }
+
+    //---------------------- REG COMPLETE CALLBACKS ------------------//
+    private fun onRegistrationSuccessful() {
+        _registrationSuccessful.value = true
+    }
+
+    fun doneNavigatingToHome() {
+        _registrationSuccessful.value = null
     }
 
     //-------------------- DATABASE OPERATIONS -----------//

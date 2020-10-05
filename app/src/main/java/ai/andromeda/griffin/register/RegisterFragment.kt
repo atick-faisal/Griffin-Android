@@ -49,6 +49,13 @@ class RegisterFragment : Fragment() {
                 registerViewModel.doneShowingViews()
             }
         })
+        registerViewModel.registrationSuccessful.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                hideProgress()
+                navigateToHome()
+                registerViewModel.doneNavigatingToHome()
+            }
+        })
 
         //-------------------- MENU -------------------//
         (context as AppCompatActivity).supportActionBar?.title =
@@ -66,6 +73,16 @@ class RegisterFragment : Fragment() {
     private fun onConnectionSuccessful() {
         rootView.noConnectionView.visibility = View.GONE
         rootView.registrationForm.visibility = View.VISIBLE
+    }
+
+    //-------------------- PROGRESS DIALOG -----------------//
+    private fun showProgress() {
+        rootView.registrationForm.alpha = 0.1F
+        rootView.progressDialog.visibility = View.VISIBLE
+    }
+    private fun hideProgress() {
+        rootView.registrationForm.alpha = 1.0F
+        rootView.progressDialog.visibility = View.GONE
     }
 
     //------------------------ REGISTER DEVICE --------------------//
@@ -131,10 +148,9 @@ class RegisterFragment : Fragment() {
                         lockedSensors = numSensors,
                         customMessage = customMessage
                     )
-
+                    showProgress()
                     registerViewModel.publish(data)
                     registerViewModel.saveData(data)
-                    navigateToHome()
                 }
             }
         }
