@@ -44,7 +44,6 @@ class MqttConnectionManagerService : Service() {
     private lateinit var deviceDatabase: DeviceDatabase
 
     private var isConnectedLocally = false
-    private var triedConnectingGlobally = true
     private var connecting = false
 
     // Service Binder Instance
@@ -72,7 +71,7 @@ class MqttConnectionManagerService : Service() {
     //---------------------------- ON_START_COMMAND() -------------------------//
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Has to display notification in order to keep the service alive
-        if (!client.isConnected  && !connecting) {
+        if (!client.isConnected && !connecting) {
             showPersistentNotification(getString(R.string.device_offline_warning), false)
             resetClient()
             connect(client)
@@ -217,8 +216,7 @@ class MqttConnectionManagerService : Service() {
                 client.publish(topic, message)
                 showMessage(applicationContext, "COMMAND SENT")
                 Log.i(LOG_TAG, "SERVICE: PUBLISH -> $payload")
-            }
-            else {
+            } else {
                 showMessage(applicationContext, "NO CONNECTION")
             }
         } catch (e: UnsupportedEncodingException) {
