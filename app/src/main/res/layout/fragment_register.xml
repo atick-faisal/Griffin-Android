@@ -171,17 +171,17 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/additionalInfoTextField"
+                android:id="@+id/customMessageTextField"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/sensorNumberInputField"
-                android:hint="@string/additional_information"
+                android:hint="@string/custom_message_optional"
                 app:errorEnabled="true"
                 app:startIconDrawable="@drawable/ic_additional_info">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/additionalInfoText"
+                    android:id="@+id/customMessageText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
@@ -192,7 +192,7 @@
                 android:id="@+id/registerButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/additionalInfoTextField"
+                android:layout_below="@+id/customMessageTextField"
                 android:layout_marginTop="8dp"
                 android:text="@string/register" />
 

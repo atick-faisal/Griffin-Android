@@ -69,7 +69,7 @@ class ShareViewModel(
             json.put("contact2", device.contact2)
             json.put("contact3", device.contact3)
             json.put("numSensors", device.numSensors)
-            json.put("additionalInfo", device.additionalInfo)
+            json.put("customMessage", device.customMessage)
             json.put("lockedSensors", device.lockedSensors)
         } catch (e: JSONException) {
             e.printStackTrace()

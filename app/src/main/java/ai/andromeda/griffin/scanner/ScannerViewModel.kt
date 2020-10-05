@@ -39,7 +39,7 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
             val contact2 = json.getString("contact2")
             val contact3 = json.getString("contact3")
             val numSensors = json.getInt("numSensors")
-            val additionalInfo = json.getString("additionalInfo")
+            val customMessage = json.getString("customMessage")
             val lockedSensors = json.getInt("lockedSensors")
             device = DeviceEntity(
                 deviceId = deviceId,
@@ -50,7 +50,7 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
                 contact2 = contact2,
                 contact3 = contact3,
                 numSensors =  numSensors,
-                additionalInfo = additionalInfo,
+                customMessage = customMessage,
                 lockedSensors = lockedSensors
             )
             _deviceName.value = name

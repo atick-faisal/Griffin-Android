@@ -7,7 +7,7 @@
     <color name="colorSecondary">#EC407A</color>
     <color name="colorSecondaryVariant">#F06292</color>
     <color name="colorOnSecondary">#FAFAFA</color>
-    <color name="colorError">#EF5350</color>
+    <color name="colorError">#c62828</color>
     <color name="colorOnError">#FAFAFA</color>
     <color name="colorSurface">#FAFAFA</color>
     <color name="colorBackground">#FAFAFA</color>

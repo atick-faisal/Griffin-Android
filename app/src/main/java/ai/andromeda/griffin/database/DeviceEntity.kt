@@ -25,7 +25,7 @@ data class DeviceEntity(
     @ColumnInfo(name = "num_sensors")
     val numSensors: Int = 0,
     @ColumnInfo(name = "additional_info")
-    val additionalInfo: String = "",
+    val customMessage: String = "",
     @ColumnInfo(name = "locked_sensors")
     var lockedSensors: Int = 0
 )

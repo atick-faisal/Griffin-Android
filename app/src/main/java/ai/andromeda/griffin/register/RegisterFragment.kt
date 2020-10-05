@@ -111,7 +111,7 @@ class RegisterFragment : Fragment() {
                 val contact2 = rootView.contact2Input.text.toString()
                 val contact3 = rootView.contact3Input.text.toString()
                 val numSensors = rootView.sensorNumberInput.text.toString().toInt()
-                val additionalInfo = rootView.additionalInfoText.text.toString()
+                val customMessage = rootView.customMessageText.text.toString()
 
                 //--------------- SENSOR NUMBER CHECK ---------------//
                 if (numSensors > 999) {
@@ -129,7 +129,7 @@ class RegisterFragment : Fragment() {
                         contact3 = contact3,
                         numSensors = numSensors,
                         lockedSensors = numSensors,
-                        additionalInfo = additionalInfo
+                        customMessage = customMessage
                     )
 
                     registerViewModel.publish(data)
