@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="32dp"
             android:paddingRight="32dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/registerImage"
@@ -216,8 +216,7 @@
         android:layout_centerVertical="true"
         android:orientation="vertical"
         android:paddingLeft="32dp"
-        android:paddingRight="32dp"
-        android:visibility="gone">
+        android:paddingRight="32dp">
 
         <ImageView
             android:id="@+id/noConnectionIcon"

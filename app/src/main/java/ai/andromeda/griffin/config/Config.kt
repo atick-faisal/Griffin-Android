@@ -2,7 +2,7 @@ package ai.andromeda.griffin.config
 
 object Config {
     const val LOG_TAG = "GRIFFIN_LOG"
-    const val LOCAL_BROKER_IP = "tcp://192.168.0.105:1883" // TODO LOCAL IP
+    const val LOCAL_BROKER_IP = "tcp://192.168.4.1:1883"
     const val SUBSCRIPTION_TOPIC = "Pub/Griffin0"
     const val PUBLISH_TOPIC = "Sub/Griffin0"
     const val GLOBAL_BROKER_IP = "tcp://broker.hivemq.com:1883"
