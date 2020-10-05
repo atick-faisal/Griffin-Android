@@ -1,39 +1,25 @@
 package ai.andromeda.griffin.reconfigure
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.background.MqttConnectionManagerService
 import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.device.DeviceFragmentArgs
-import ai.andromeda.griffin.util.generateDeviceId
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_reconfigure.view.*
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact1Input
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact1InputField
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact2Input
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.contact3Input
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.customMessageText
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.deviceNameInput
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.deviceNameInputField
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.passwordInput
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.passwordInputField
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.sensorNumberInput
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.sensorNumberInputField
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.ssidInput
-import kotlinx.android.synthetic.main.fragment_reconfigure.view.ssidInputField
 
 class ReconfigureFragment : Fragment() {
 
@@ -57,6 +43,7 @@ class ReconfigureFragment : Fragment() {
         }
     }
 
+    //------------------ ON_CREATE_VIEW() -------------------//
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,20 +51,24 @@ class ReconfigureFragment : Fragment() {
         rootView = inflater.inflate(R.layout.fragment_reconfigure, container, false)
         val application = requireActivity().application
 
+        //--------------------------- ARGUMENTS -----------------------//
         deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId ?: ""
 
+        //--------------------- CONFIGURE VIEW MODEL ---------------------//
         val reconfigureViewModelFactory = ReconfigureViewModelFactory(application, deviceId)
         reconfigureViewModel = ViewModelProvider(this, reconfigureViewModelFactory)
             .get(ReconfigureViewModel::class.java)
 
-
+        //---------------------------- LIVE DATA ------------------------//
         reconfigureViewModel.device.observe(viewLifecycleOwner, Observer { device ->
             device?.let {
                 updateUI(device)
             }
         })
 
+        //-------------------- ON CLICK LISTENER -------------------//
         rootView.saveChangesButton.setOnClickListener { saveChanges() }
+        rootView.cancelButton.setOnClickListener { navigateToDevice() }
 
         return rootView
     }
@@ -93,6 +84,7 @@ class ReconfigureFragment : Fragment() {
         }
     }
 
+    //-------------------------- UPDATE UI -----------------------//
     private fun updateUI(device: DeviceEntity) {
         rootView.deviceNameInput.setText(device.deviceName.toString())
         rootView.ssidInput.setText(device.ssid.toString())
@@ -116,23 +108,23 @@ class ReconfigureFragment : Fragment() {
         when {
             isNameEmpty -> {
                 rootView.deviceNameInputField.error = getString(R.string.empty_field_warning)
-                Log.i(Config.LOG_TAG, "REGISTER_F: NAME FIELD EMPTY")
+                Log.i(Config.LOG_TAG, "RECONFIGURE_F: NAME FIELD EMPTY")
             }
             isSSIDEmpty -> {
                 rootView.ssidInputField.error = getString(R.string.empty_field_warning)
-                Log.i(Config.LOG_TAG, "REGISTER_F: NAME FIELD EMPTY")
+                Log.i(Config.LOG_TAG, "RECONFIGURE_F: NAME FIELD EMPTY")
             }
             isPasswordEmpty -> {
                 rootView.passwordInputField.error = getString(R.string.empty_field_warning)
-                Log.i(Config.LOG_TAG, "REGISTER_F: PASSWORD FIELD EMPTY")
+                Log.i(Config.LOG_TAG, "RECONFIGURE_F: PASSWORD FIELD EMPTY")
             }
             isContactEmpty -> {
                 rootView.contact1InputField.error = getString(R.string.empty_field_warning)
-                Log.i(Config.LOG_TAG, "REGISTER_F: CONTACT FIELD EMPTY")
+                Log.i(Config.LOG_TAG, "RECONFIGURE_F: CONTACT FIELD EMPTY")
             }
             isNumSensorEmpty -> {
                 rootView.sensorNumberInputField.error = getString(R.string.empty_field_warning)
-                Log.i(Config.LOG_TAG, "REGISTER_F: PASSWORD FIELD EMPTY")
+                Log.i(Config.LOG_TAG, "RECONFIGURE_F: PASSWORD FIELD EMPTY")
             }
 
             //------------------- PUBLISH DATA -----------------//
@@ -149,7 +141,7 @@ class ReconfigureFragment : Fragment() {
                 //--------------- SENSOR NUMBER CHECK ---------------//
                 if (numSensors > 999) {
                     rootView.sensorNumberInputField.error = getString(R.string.too_many_sensors)
-                    Log.i(Config.LOG_TAG, "REGISTER_F: PASSWORD FIELD EMPTY")
+                    Log.i(Config.LOG_TAG, "RECONFIGURE_F: PASSWORD FIELD EMPTY")
                 }
                 else {
                     val data = DeviceEntity(
@@ -166,12 +158,18 @@ class ReconfigureFragment : Fragment() {
                     )
                     reconfigureViewModel.updateDevice(data)
                     reconfigureViewModel.publishData(data)
-                    // navigateToHome()
+                    navigateToHome()
                 }
             }
         }
     }
 
+    //----------- NAVIGATE BACK ---------//
+    private fun navigateToDevice() {
+        findNavController().popBackStack()
+    }
+
+    //------------------ NAVIGATE TO HOME --------------------//
     private fun navigateToHome() {
         findNavController().navigate(
             ReconfigureFragmentDirections.actionReconfigureFragmentToHomeFragment()

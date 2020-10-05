@@ -124,5 +124,10 @@
             android:defaultValue="null"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_reconfigureFragment_to_deviceDetailsFragment"
+            app:destination="@id/deviceDetailsFragment"
+            app:popUpTo="@id/reconfigureFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

@@ -1,7 +1,6 @@
 package ai.andromeda.griffin.reconfigure
 
 import ai.andromeda.griffin.background.MqttConnectionManagerService
-import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
@@ -12,8 +11,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.json.JSONException
@@ -27,15 +24,17 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
     private lateinit var client: MqttAndroidClient
     var mBound: Boolean = false
 
+    //------------------ LIVE DATA -------------------//
     private val _device = MutableLiveData<DeviceEntity>()
     val device: LiveData<DeviceEntity>
         get() = _device
 
     //--------------------- COUNTER -----------------------//
     private var count = SharedPreferencesManager.getLong(
-        application, "REG_COUNT" // TODO FIX REG COUNT
+        application, "${deviceId}/REG_COUNT" // TODO FIX REG COUNT
     )
 
+    //--------------- INIT -------------//
     init {
         _device.value = null
         initDevice(deviceId)
@@ -45,16 +44,6 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
     fun initializeClient(service: MqttConnectionManagerService) {
         mqttService = service
         client = service.client
-    }
-
-    private fun initDevice(deviceId: String) {
-        viewModelScope.launch {
-            _device.value = get(deviceId)
-        }
-    }
-
-    private suspend fun get(deviceId: String): DeviceEntity? {
-        return database.get(deviceId)
     }
 
     fun publishData(deviceEntity: DeviceEntity) {
@@ -87,6 +76,17 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
         return payload.toString()
     }
 
+    private fun mapDeviceData(deviceEntity: DeviceEntity): DeviceEntity {
+        deviceEntity.id = _device.value?.id ?: 999L
+        return deviceEntity
+    }
+
+    //-------------------- DATABASE OPERATIONS ------------------//
+    private fun initDevice(deviceId: String) {
+        viewModelScope.launch {
+            _device.value = get(deviceId)
+        }
+    }
     fun updateDevice(deviceEntity: DeviceEntity) {
         if (deviceEntity.numSensors != device.value?.numSensors) {
             writeToSharedPreferences(deviceEntity)
@@ -94,12 +94,9 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
         val updatedDevice = mapDeviceData(deviceEntity)
         viewModelScope.launch { update(updatedDevice) }
     }
-
-    private fun mapDeviceData(deviceEntity: DeviceEntity): DeviceEntity {
-        deviceEntity.id = _device.value?.id ?: 999L
-        return deviceEntity
+    private suspend fun get(deviceId: String): DeviceEntity? {
+        return database.get(deviceId)
     }
-
     private suspend fun update(deviceEntity: DeviceEntity) {
         database.update(deviceEntity)
     }
@@ -128,18 +125,18 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
             )
         }
 
-        Log.i(Config.LOG_TAG, "RECONFIGURE_VM: WRITING TO SP")
+        Log.i(LOG_TAG, "RECONFIGURE_VM: WRITING TO SP")
     }
 
     //------------------------ SAVE COUNT -----------------------//
     private fun saveCount() {
-        SharedPreferencesManager.putLong(getApplication(), "REG_COUNT", count)
+        SharedPreferencesManager.putLong(getApplication(), "${deviceId}/REG_COUNT", count)
     }
 
     //---------------- ON_CLEARED() -------------//
     override fun onCleared() {
         super.onCleared()
         saveCount()
-        Log.i(Config.LOG_TAG, "RECONFIGURE_VM: CLIENT CLEARED")
+        Log.i(LOG_TAG, "RECONFIGURE_VM: CLIENT CLEARED")
     }
 }

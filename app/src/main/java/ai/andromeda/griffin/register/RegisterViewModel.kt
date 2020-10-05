@@ -1,6 +1,5 @@
 package ai.andromeda.griffin.register
 
-import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
@@ -33,11 +32,6 @@ class RegisterViewModel(application: Application) :
     private val _connectionSuccessful = MutableLiveData<Boolean>()
     val connectionSuccessful: LiveData<Boolean>
         get() = _connectionSuccessful
-
-    //--------------------- COUNTER -----------------------//
-    private var count = SharedPreferencesManager.getLong(
-        application, "REG_COUNT"
-    )
 
     init {
         _connectionSuccessful.value = null
@@ -138,6 +132,7 @@ class RegisterViewModel(application: Application) :
 
     //--------------------- CREATE JSON FORMATTED DATA -----------------//
     private fun getJsonObject(data: DeviceEntity): String {
+        var count = loadCount(data.deviceId.toString())
         val payload = JSONObject()
         try {
             payload.put("Device_ID", data.deviceId)
@@ -151,6 +146,7 @@ class RegisterViewModel(application: Application) :
             payload.put("Contact_2", data.contact2)
             payload.put("Contact_3", data.contact3)
             payload.put("Message", data.customMessage)
+            saveCount(data.deviceId.toString(), count)
         } catch (e: JSONException) {
             Log.i(LOG_TAG, "REGISTER_VM: JSON ERROR")
             e.printStackTrace()
@@ -212,15 +208,19 @@ class RegisterViewModel(application: Application) :
         Log.i(LOG_TAG, "REGISTER_VM: WRITING TO SP")
     }
 
+    //--------------------- LOAD COUNT --------------------//
+    private fun loadCount(deviceId: String): Long {
+        return SharedPreferencesManager.getLong(getApplication(), "${deviceId}/REG_COUNT")
+    }
+
     //------------------------ SAVE COUNT -----------------------//
-    private fun saveCount() {
-        SharedPreferencesManager.putLong(getApplication(), "REG_COUNT", count)
+    private fun saveCount(deviceId: String, count: Long) {
+        SharedPreferencesManager.putLong(getApplication(), "${deviceId}/REG_COUNT", count)
     }
 
     //---------------- ON_CLEARED() -------------//
     override fun onCleared() {
         super.onCleared()
-        saveCount()
         client.close()
         Log.i(LOG_TAG, "REGISTER_VM: CLIENT CLEARED")
     }
