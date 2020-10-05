@@ -56,4 +56,12 @@
     <string name="about_this_app">About this app</string>
     <string name="contact_us">Contact us</string>
     <string name="contact">Contact</string>
+    <string name="edit">Edit</string>
+    <string name="edit_device">Edit Device</string>
+    <string name="custom_message_optional">Custom Message (Optional)</string>
+    <string name="delete_warning">This device and all it\'s data will be lost. Are you sure you want to delete?</string>
+    <string name="delete_device">Delete Device</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="please_wait">Please Wait...</string>
+    <string name="device_dashboard">Device Dashboard</string>
 </resources>

@@ -7,12 +7,12 @@
     <color name="colorSecondary">#EC407A</color>
     <color name="colorSecondaryVariant">#F06292</color>
     <color name="colorOnSecondary">#FAFAFA</color>
-    <color name="colorError">#EF5350</color>
+    <color name="colorError">#c62828</color>
     <color name="colorOnError">#FAFAFA</color>
     <color name="colorSurface">#FAFAFA</color>
     <color name="colorBackground">#FAFAFA</color>
     <color name="colorOnBackground">#212121</color>
     <color name="lockedColor">#11009900</color>
     <color name="unlockedColor">#11990000</color>
-    <color name="green">#4CAF50</color>
+    <color name="green">#2E7D32</color>
 </resources>

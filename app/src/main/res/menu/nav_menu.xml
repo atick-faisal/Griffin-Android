@@ -6,6 +6,13 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/homeFragment"
+            android:title="@string/dashboard"
+            android:icon="@drawable/ic_dashboard"
+            android:contentDescription="@string/device_dashboard"
+            app:showAsAction="ifRoom" />
+
+        <item
             android:id="@+id/registerFragment"
             android:icon="@drawable/ic_device"
             android:title="@string/register"

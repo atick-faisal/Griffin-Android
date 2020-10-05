@@ -25,6 +25,7 @@ class SensorAdapter(private val clickListener: (view: Int, position: Int) -> Uni
 
         private val sensorNameText: TextView = view.sensorNameText
         private val sensorStatusText: TextView = view.sensorStatusText
+        private val sensorStatusBackground: ImageView = view.sensorStatusBackground
         private val sensorStatusImage: ImageView = view.sensorStatusImage
         private val res = view.context.resources
         private val context = view.context
@@ -49,14 +50,16 @@ class SensorAdapter(private val clickListener: (view: Int, position: Int) -> Uni
                     sensorStatusText.background = ContextCompat.getDrawable(
                         context, R.drawable.green_pill
                     )
-                    sensorStatusImage.setImageResource(R.drawable.green_circle)
+                    sensorStatusBackground.setImageResource(R.drawable.green_circle)
+                    sensorStatusImage.setImageResource(R.drawable.ic_lock)
                 }
                 1 -> {
                     sensorStatusText.text = res.getString(R.string.unlocked_status)
                     sensorStatusText.background = ContextCompat.getDrawable(
                         context, R.drawable.red_pill
                     )
-                    sensorStatusImage.setImageResource(R.drawable.red_circle)
+                    sensorStatusBackground.setImageResource(R.drawable.red_circle)
+                    sensorStatusImage.setImageResource(R.drawable.ic_unlock)
                 }
             }
         }

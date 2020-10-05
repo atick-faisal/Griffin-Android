@@ -19,6 +19,8 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
 
     val database = deviceDatabase.deviceDao
     private var device: DeviceEntity? = null
+    private var sensorNames: String? = null
+    private var sensorValues: String? = null
 
     private val _deviceName = MutableLiveData<String>()
     val deviceName: LiveData<String>
@@ -39,8 +41,10 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
             val contact2 = json.getString("contact2")
             val contact3 = json.getString("contact3")
             val numSensors = json.getInt("numSensors")
-            val additionalInfo = json.getString("additionalInfo")
+            val customMessage = json.getString("customMessage")
             val lockedSensors = json.getInt("lockedSensors")
+            sensorNames = json.getString("sensorNames")
+            sensorValues = json.getString("sensorValues")
             device = DeviceEntity(
                 deviceId = deviceId,
                 deviceName = name,
@@ -50,7 +54,7 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
                 contact2 = contact2,
                 contact3 = contact3,
                 numSensors =  numSensors,
-                additionalInfo = additionalInfo,
+                customMessage = customMessage,
                 lockedSensors = lockedSensors
             )
             _deviceName.value = name
@@ -68,7 +72,6 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
 
     fun saveData() {
         if (device != null) {
-            writeToSharedPreferences()
             viewModelScope.launch {
                 insert()
             }
@@ -76,22 +79,17 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
         } else {
             Log.i(LOG_TAG, "DEVICE NOT INITIALIZED")
         }
+        if (sensorNames != null && sensorValues != null) {
+            writeToSharedPreferences()
+        }
     }
 
     private fun writeToSharedPreferences() {
         device?.let {
-            val nameKey = device!!.deviceId + "/name"
-            val valueKey = device!!.deviceId + "/value"
-            val names = StringBuilder()
-            val values = StringBuilder()
-
-            val n = device!!.numSensors
-            for (i in 0 until n) {
-                names.append("SENSOR $i,")
-                values.append("0,")
-            }
-            SharedPreferencesManager.putString(getApplication(), nameKey, names.toString())
-            SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
+            val nameKey = device?.deviceId.toString() + "/name"
+            val valueKey = device?.deviceId.toString() + "/value"
+            SharedPreferencesManager.putString(getApplication(), nameKey, sensorNames!!)
+            SharedPreferencesManager.putString(getApplication(), valueKey, sensorValues!!)
         }
     }
 

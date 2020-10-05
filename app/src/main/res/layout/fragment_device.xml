@@ -63,6 +63,54 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/deleteDialog"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/card_white"
+        android:elevation="16dp"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/deleteDialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_this_device"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/deleteDialogDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/deleteDialogTitle"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/delete_warning"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/cancelDeleteButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/deleteDialogDescription"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/deleteDialogButton"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/deleteDialogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/deleteDialogDescription"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@color/colorError"
+            android:text="@string/delete" />
+
+    </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sensorList"
         android:layout_width="match_parent"
@@ -71,6 +119,7 @@
         android:paddingTop="8dp"
         android:paddingRight="4dp"
         android:paddingBottom="8dp"
+        android:visibility="visible"
         tools:listitem="@layout/sensor_list_item" />
 
 </RelativeLayout>

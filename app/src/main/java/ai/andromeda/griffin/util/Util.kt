@@ -1,9 +1,16 @@
 package ai.andromeda.griffin.util
 
+import ai.andromeda.griffin.background.MqttWorker
 import ai.andromeda.griffin.config.Config.ALLOWED_CHARACTERS
 import ai.andromeda.griffin.config.Config.ID_LENGTH
+import ai.andromeda.griffin.config.Config.LOG_TAG
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.gson.Gson
 import java.util.*
 
@@ -22,4 +29,17 @@ fun showMessage(context: Context, message: String) {
 fun toArray(json: String): IntArray? {
     val arrayParser = Gson()
     return arrayParser.fromJson(json, IntArray::class.java)
+}
+
+fun makeMqttServiceRequest() {
+    Log.i(LOG_TAG, "UTIL: MQTT SERVICE REQUESTED")
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+
+    val workRequest = OneTimeWorkRequestBuilder<MqttWorker>()
+        .setConstraints(constraints)
+        .build()
+
+    WorkManager.getInstance().enqueue(workRequest)
 }

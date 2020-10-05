@@ -1,10 +1,10 @@
 package ai.andromeda.griffin.register
 
-import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.config.Config.DEVICE_ID_KEY
 import ai.andromeda.griffin.config.Config.LOCAL_BROKER_IP
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.config.Config.PUBLISH_TOPIC
+import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.util.SharedPreferencesManager
@@ -23,23 +23,25 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 
+@Suppress("SameParameterValue")
 class RegisterViewModel(application: Application) :
     AndroidViewModel(application) {
 
     private val database = DeviceDatabase.getInstance(application).deviceDao
     private lateinit var client: MqttAndroidClient
+    private lateinit var deviceEntity: DeviceEntity
 
     //--------------------- LIVE DATA --------------------//
     private val _connectionSuccessful = MutableLiveData<Boolean>()
     val connectionSuccessful: LiveData<Boolean>
         get() = _connectionSuccessful
 
-    //--------------------- COUNTER -----------------------//
-    private var count = SharedPreferencesManager.getLong(
-        application, "REG_COUNT"
-    )
+    private val _registrationSuccessful = MutableLiveData<Boolean>()
+    val registrationSuccessful: LiveData<Boolean>
+        get() = _registrationSuccessful
 
     init {
+        _registrationSuccessful.value = null
         _connectionSuccessful.value = null
     }
 
@@ -56,7 +58,7 @@ class RegisterViewModel(application: Application) :
                     override fun onSuccess(asyncActionToken: IMqttToken) {
                         showMessage(getApplication(), "CONNECTED!")
                         Log.i(LOG_TAG, "REGISTER_VM: MQTT CONNECTED!")
-                        // subscribe(SUBSCRIPTION_TOPIC) // TODO SUBSCRIBE FOR CALLBACKS
+                        subscribe(SUBSCRIPTION_TOPIC)
                         onConnectionSuccessful()
                     }
 
@@ -73,7 +75,10 @@ class RegisterViewModel(application: Application) :
                     override fun messageArrived(
                         topic: String?, message: MqttMessage?
                     ) {
-                        // TODO CHECK FOR SUCCESSFUL REGISTRATION
+                        if (message.toString() == "configured") {
+                            showMessage(getApplication(), "REGISTERED")
+                            onRegistrationSuccessful()
+                        }
                         Log.i(LOG_TAG, "REGISTER_VM: MESSAGE : " + message.toString())
                     }
 
@@ -94,30 +99,30 @@ class RegisterViewModel(application: Application) :
     }
 
     //---------------------- SUBSCRIBE -------------------//
-//    private fun subscribe(topic: String) {
-//        try {
-//            val subToken = client.subscribe(topic, 1)
-//            subToken.actionCallback = object : IMqttActionListener {
-//                override fun onSuccess(asyncActionToken: IMqttToken) {
-//                    Log.i(LOG_TAG, "SUBSCRIBED TO : $topic")
-//                    showMessage("SUBSCRIBED TO : $topic")
-//                }
-//
-//                override fun onFailure(
-//                    asyncActionToken: IMqttToken,
-//                    exception: Throwable
-//                ) {
-//                    Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
-//                    showMessage("COULD NOT SUBSCRIBE")
-//                }
-//            }
-//        } catch (e: MqttException) {
-//            e.printStackTrace()
-//        }
-//    }
+    private fun subscribe(topic: String) {
+        try {
+            val subToken = client.subscribe(topic, 1)
+            subToken.actionCallback = object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken) {
+                    Log.i(LOG_TAG, "SUBSCRIBED TO : $topic")
+                }
+
+                override fun onFailure(
+                    asyncActionToken: IMqttToken,
+                    exception: Throwable
+                ) {
+                    Log.i(LOG_TAG, "COULD NOT SUBSCRIBE")
+                }
+            }
+        } catch (e: MqttException) {
+            e.printStackTrace()
+        }
+    }
 
     //------------------- PUBLISH DATA -------------------//
     fun publish(data: DeviceEntity) {
+        // Saving for database operation
+        deviceEntity = data
         val payload = getJsonObject(data)
         try {
             if (::client.isInitialized) {
@@ -125,8 +130,10 @@ class RegisterViewModel(application: Application) :
                     val encodedPayload = payload.toByteArray(charset("UTF-8"))
                     val message = MqttMessage(encodedPayload)
                     client.publish(PUBLISH_TOPIC, message)
-                    showMessage(getApplication(), "REGISTERED")
                     Log.i(LOG_TAG, "REGISTER_VM: PUBLISH -> $payload")
+                }
+                else {
+                    showMessage(getApplication(), "NO CONNECTION")
                 }
             }
         } catch (e: UnsupportedEncodingException) {
@@ -138,17 +145,21 @@ class RegisterViewModel(application: Application) :
 
     //--------------------- CREATE JSON FORMATTED DATA -----------------//
     private fun getJsonObject(data: DeviceEntity): String {
+        var count = loadCount(data.deviceId.toString())
         val payload = JSONObject()
         try {
             payload.put("Device_ID", data.deviceId)
             payload.put("Count", ++count)
             payload.put("Command", "Configuration")
-            payload.put("AP_SSID", data.ssid)
-            payload.put("AP_Password", data.password)
+            payload.put("SSID", data.ssid)
+            payload.put("Password", data.password)
             payload.put("Number_of_Sensors", data.numSensors)
             payload.put("Number_of_Contacts", 3)
-            payload.put("Contacts", listOf(data.contact1, data.contact2, data.contact3))
-            payload.put("Message", data.additionalInfo)
+            payload.put("Contact_1", data.contact1)
+            payload.put("Contact_2", data.contact2)
+            payload.put("Contact_3", data.contact3)
+            payload.put("Message", data.customMessage)
+            saveCount(data.deviceId.toString(), count)
         } catch (e: JSONException) {
             Log.i(LOG_TAG, "REGISTER_VM: JSON ERROR")
             e.printStackTrace()
@@ -165,13 +176,24 @@ class RegisterViewModel(application: Application) :
         _connectionSuccessful.value = null
     }
 
+    //---------------------- REG COMPLETE CALLBACKS ------------------//
+    private fun onRegistrationSuccessful() {
+        _registrationSuccessful.value = true
+    }
+
+    fun doneNavigatingToHome() {
+        _registrationSuccessful.value = null
+    }
+
     //-------------------- DATABASE OPERATIONS -----------//
-    fun saveData(data: DeviceEntity) {
-        writeToSharedPreferences(data)
-        CoroutineScope(Dispatchers.IO).launch {
-            database.insert(data)
+    fun saveData() {
+        if (::deviceEntity.isInitialized) {
+            writeToSharedPreferences(deviceEntity)
+            CoroutineScope(Dispatchers.IO).launch {
+                database.insert(deviceEntity)
+            }
+            Log.i(LOG_TAG, "REGISTER_VM: WRITING TO DB")
         }
-        Log.i(LOG_TAG, "REGISTER_VM: WRITING TO DB")
     }
 
     //----------------- WRITING TO SP -----------------//
@@ -210,15 +232,19 @@ class RegisterViewModel(application: Application) :
         Log.i(LOG_TAG, "REGISTER_VM: WRITING TO SP")
     }
 
+    //--------------------- LOAD COUNT --------------------//
+    private fun loadCount(deviceId: String): Long {
+        return SharedPreferencesManager.getLong(getApplication(), "${deviceId}/REG_COUNT")
+    }
+
     //------------------------ SAVE COUNT -----------------------//
-    private fun saveCount() {
-        SharedPreferencesManager.putLong(getApplication(), "REG_COUNT", count)
+    private fun saveCount(deviceId: String, count: Long) {
+        SharedPreferencesManager.putLong(getApplication(), "${deviceId}/REG_COUNT", count)
     }
 
     //---------------- ON_CLEARED() -------------//
     override fun onCleared() {
         super.onCleared()
-        saveCount()
         client.close()
         Log.i(LOG_TAG, "REGISTER_VM: CLIENT CLEARED")
     }

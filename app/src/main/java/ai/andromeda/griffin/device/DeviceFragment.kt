@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_device.view.*
 
@@ -97,6 +96,11 @@ class DeviceFragment : Fragment() {
         //----------------- CLICK LISTENERS ------------------//
         rootView.saveNameButton.setOnClickListener { onSaveButtonClick() }
         rootView.cancelButton.setOnClickListener { onCancelButtonClick() }
+        rootView.cancelDeleteButton.setOnClickListener { hideDeleteDialog() }
+        rootView.deleteDialogButton.setOnClickListener {
+                deviceViewModel.removeDevice()
+                navigateToHome()
+        }
 
         //-------------------- MENU ------------------//
         setHasOptionsMenu(true)
@@ -152,6 +156,18 @@ class DeviceFragment : Fragment() {
         hideKeyboard()
     }
 
+    //------------------- SHOW DELETE DIALOG ------------------//
+    private fun showDeleteDialog() {
+        rootView.deleteDialog.visibility = View.VISIBLE
+        rootView.sensorList.alpha = 0.1F
+    }
+
+    //------------------- HIDE DELETE DIALOG ------------------//
+    private fun hideDeleteDialog() {
+        rootView.deleteDialog.visibility = View.GONE
+        rootView.sensorList.alpha = 1.0F
+    }
+
     //-------------------- SHOW KEYBOARD ---------------//
     private fun showKeyboard() {
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE)
@@ -173,6 +189,13 @@ class DeviceFragment : Fragment() {
         )
     }
 
+    //----------------------- NAVIGATE TO HOME FRAGMENT ------------------//
+    private fun navigateToReconfigure() {
+        findNavController().navigate(
+            DeviceFragmentDirections.actionDeviceDetailsFragmentToReconfigureFragment(deviceId)
+        )
+    }
+
     //------------------ CREATE MENU -------------------//
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.device_menu, menu)
@@ -190,8 +213,11 @@ class DeviceFragment : Fragment() {
                 true
             }
             R.id.deleteDevice -> {
-                deviceViewModel.removeDevice()
-                navigateToHome()
+                showDeleteDialog()
+                true
+            }
+            R.id.editDevice -> {
+                navigateToReconfigure()
                 true
             }
             else -> super.onOptionsItemSelected(item)

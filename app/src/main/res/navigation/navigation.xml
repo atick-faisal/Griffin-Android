@@ -72,6 +72,9 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_deviceDetailsFragment_to_reconfigureFragment"
+            app:destination="@id/reconfigureFragment" />
     </fragment>
     <fragment
         android:id="@+id/shareFragment"
@@ -104,6 +107,29 @@
             android:id="@+id/action_scannerFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/reconfigureFragment"
+        android:name="ai.andromeda.griffin.reconfigure.ReconfigureFragment"
+        android:label="Edit Device"
+        tools:layout="@layout/fragment_reconfigure">
+        <action
+            android:id="@+id/action_reconfigureFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="deviceId"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_reconfigureFragment_to_deviceDetailsFragment"
+            app:destination="@id/deviceDetailsFragment"
+            app:popUpTo="@id/reconfigureFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

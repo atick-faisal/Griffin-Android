@@ -30,11 +30,11 @@
                 android:id="@+id/registerText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/register_device"
-                android:textSize="20sp"
+                android:layout_below="@id/registerImage"
                 android:layout_centerHorizontal="true"
+                android:text="@string/register_device"
                 android:textColor="@color/colorPrimary"
-                android:layout_below="@id/registerImage"/>
+                android:textSize="20sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/deviceNameInputField"
@@ -171,17 +171,17 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/additionalInfoTextField"
+                android:id="@+id/customMessageTextField"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/sensorNumberInputField"
-                android:hint="@string/additional_information"
+                android:hint="@string/custom_message_optional"
                 app:errorEnabled="true"
                 app:startIconDrawable="@drawable/ic_additional_info">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/additionalInfoText"
+                    android:id="@+id/customMessageText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
@@ -192,7 +192,7 @@
                 android:id="@+id/registerButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/additionalInfoTextField"
+                android:layout_below="@+id/customMessageTextField"
                 android:layout_marginTop="8dp"
                 android:text="@string/register" />
 
@@ -254,6 +254,32 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:text="@string/retry" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/progressDialog"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/card_white"
+        android:elevation="24dp"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="40dp"
+            android:indeterminateTint="@color/colorPrimary"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/progressBar"
+            android:text="@string/please_wait" />
 
     </RelativeLayout>
 

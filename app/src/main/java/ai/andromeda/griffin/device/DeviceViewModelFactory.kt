@@ -1,6 +1,5 @@
 package ai.andromeda.griffin.device
 
-import ai.andromeda.griffin.database.DeviceDatabase
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

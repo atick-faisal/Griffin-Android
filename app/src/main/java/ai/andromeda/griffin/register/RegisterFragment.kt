@@ -4,11 +4,13 @@ import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
 import ai.andromeda.griffin.database.DeviceEntity
 import ai.andromeda.griffin.util.generateDeviceId
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -49,6 +51,14 @@ class RegisterFragment : Fragment() {
                 registerViewModel.doneShowingViews()
             }
         })
+        registerViewModel.registrationSuccessful.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                registerViewModel.saveData()
+                hideProgress()
+                navigateToHome()
+                registerViewModel.doneNavigatingToHome()
+            }
+        })
 
         //-------------------- MENU -------------------//
         (context as AppCompatActivity).supportActionBar?.title =
@@ -66,6 +76,16 @@ class RegisterFragment : Fragment() {
     private fun onConnectionSuccessful() {
         rootView.noConnectionView.visibility = View.GONE
         rootView.registrationForm.visibility = View.VISIBLE
+    }
+
+    //-------------------- PROGRESS DIALOG -----------------//
+    private fun showProgress() {
+        rootView.registrationForm.alpha = 0.1F
+        rootView.progressDialog.visibility = View.VISIBLE
+    }
+    private fun hideProgress() {
+        rootView.registrationForm.alpha = 1.0F
+        rootView.progressDialog.visibility = View.GONE
     }
 
     //------------------------ REGISTER DEVICE --------------------//
@@ -111,7 +131,7 @@ class RegisterFragment : Fragment() {
                 val contact2 = rootView.contact2Input.text.toString()
                 val contact3 = rootView.contact3Input.text.toString()
                 val numSensors = rootView.sensorNumberInput.text.toString().toInt()
-                val additionalInfo = rootView.additionalInfoText.text.toString()
+                val customMessage = rootView.customMessageText.text.toString()
 
                 //--------------- SENSOR NUMBER CHECK ---------------//
                 if (numSensors > 999) {
@@ -129,12 +149,11 @@ class RegisterFragment : Fragment() {
                         contact3 = contact3,
                         numSensors = numSensors,
                         lockedSensors = numSensors,
-                        additionalInfo = additionalInfo
+                        customMessage = customMessage
                     )
-
+                    showProgress()
+                    hideKeyboard()
                     registerViewModel.publish(data)
-                    registerViewModel.saveData(data)
-                    navigateToHome()
                 }
             }
         }
@@ -145,5 +164,12 @@ class RegisterFragment : Fragment() {
         findNavController().navigate(
             RegisterFragmentDirections.actionRegisterFragmentToHomeFragment()
         )
+    }
+
+    //---------------------- HIDE KEYBOARD -----------------//
+    private fun hideKeyboard() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

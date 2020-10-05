@@ -44,12 +44,22 @@
             android:src="@drawable/ic_more_vert" />
 
         <ImageView
-            android:id="@+id/sensorStatusImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/sensorStatusBackground"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
             android:layout_below="@+id/sensorNameText"
             android:layout_margin="8dp"
             android:src="@drawable/red_circle" />
+
+        <ImageView
+            android:id="@+id/sensorStatusImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="28dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/sensorNameText"
+            android:src="@drawable/ic_lock" />
 
     </RelativeLayout>
 
