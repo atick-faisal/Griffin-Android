@@ -5,7 +5,7 @@ import android.content.Intent
 
 object Config {
     const val LOG_TAG = "GRIFFIN_LOG"
-    const val LOCAL_BROKER_IP = "tcp://192.168.4.1:1883"
+    const val LOCAL_BROKER_IP = "tcp://192.168.0.106:1883" // TODO CHANGE LOCAL IP
     const val SUBSCRIPTION_TOPIC = "Pub/Griffin0"
     const val PUBLISH_TOPIC = "Sub/Griffin0"
     const val GLOBAL_BROKER_IP = "tcp://broker.hivemq.com:1883"
@@ -24,6 +24,7 @@ object Config {
     const val RESTART_REQUEST_KEY = "RESTART_MQTT"
     const val WAIT_FOR_FEEDBACK = true
     const val AUTO_START_KEY = "AUTO_START"
+    const val RETRY_INTERVAL = 5000L
 
     //------------- POWER MANAGER INTENTS --------------//
     val POWER_MANAGER_INTENTS = arrayOf(

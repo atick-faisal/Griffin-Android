@@ -12,12 +12,12 @@ interface DeviceDao {
     @Update
     suspend fun update(entity: DeviceEntity)
 
-    @Query("DELETE FROM `devices` WHERE device_id = :deviceId")
+    @Query("DELETE FROM `devices` WHERE deviceId = :deviceId")
     suspend fun delete(deviceId: String)
 
     @Query("SELECT * FROM `devices`")
     fun getAll(): LiveData<List<DeviceEntity>>
 
-    @Query("SELECT * FROM `devices` WHERE device_id = :deviceId LIMIT 1")
+    @Query("SELECT * FROM `devices` WHERE deviceId = :deviceId LIMIT 1")
     suspend fun get(deviceId: String): DeviceEntity?
 }

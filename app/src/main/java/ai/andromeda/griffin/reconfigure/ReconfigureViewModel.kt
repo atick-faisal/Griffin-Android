@@ -84,11 +84,6 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
         return payload.toString()
     }
 
-    private fun mapDeviceData(deviceEntity: DeviceEntity): DeviceEntity {
-        deviceEntity.id = _device.value?.id ?: 999L
-        return deviceEntity
-    }
-
     //-------------------- DATABASE OPERATIONS ------------------//
     private fun initDevice(deviceId: String) {
         viewModelScope.launch {
@@ -99,8 +94,7 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
         if (deviceEntity.numSensors != device.value?.numSensors) {
             writeToSharedPreferences(deviceEntity)
         }
-        val updatedDevice = mapDeviceData(deviceEntity)
-        viewModelScope.launch { update(updatedDevice) }
+        viewModelScope.launch { update(deviceEntity) }
     }
     private suspend fun get(deviceId: String): DeviceEntity? {
         return database.get(deviceId)

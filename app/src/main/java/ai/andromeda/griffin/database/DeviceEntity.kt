@@ -6,10 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "devices")
 data class DeviceEntity(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0L,
-    @ColumnInfo(name = "device_id")
-    val deviceId: String?,
+    @PrimaryKey
+    val deviceId: String,
     @ColumnInfo(name = "device_name")
     var deviceName: String?,
     @ColumnInfo(name = "ssid")
