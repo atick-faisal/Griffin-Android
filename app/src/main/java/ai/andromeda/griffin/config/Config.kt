@@ -10,7 +10,7 @@ object Config {
     const val PUBLISH_TOPIC = "Sub/Griffin0"
     const val GLOBAL_BROKER_IP = "tcp://broker.hivemq.com:1883"
     const val ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm"
-    const val ID_LENGTH = 16
+    const val ID_LENGTH = 8
     const val PREFERENCE_NAME = "APP_SETTINGS"
     const val PERSISTENT_NOTIFICATION_TITLE = "Griffin Service"
     const val PERSISTENT_NOTIFICATION_ID = 10010
