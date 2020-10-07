@@ -1,10 +1,10 @@
 package ai.andromeda.griffin.home
 
 import ai.andromeda.griffin.R
-import ai.andromeda.griffin.config.Config.LOG_TAG
+import ai.andromeda.griffin.config.Config
 import ai.andromeda.griffin.database.DeviceEntity
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -49,15 +49,57 @@ class HomeFragment : Fragment() {
                 }
             }
         })
+        homeViewModel.aksAutoStart.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                if (it == 0L) {
+                    showAutoStartDialog()
+                }
+            }
+        })
 
         //------------------------- ON CLICK LISTENERS -----------------------//
         rootView.fab.setOnClickListener { navigateToRegister() }
+        rootView.enableButton.setOnClickListener { doneAskingPermission() }
+        rootView.cancelButton.setOnClickListener { hideAutoStartDialog() }
 
         //--------------------- MENU -----------------//
         setHasOptionsMenu(true)
         (context as AppCompatActivity).supportActionBar?.title = getString(R.string.dashboard)
 
         return rootView
+    }
+
+    //-------------------- SHOW AUTO START DIALOG ----------------//
+    private fun showAutoStartDialog() {
+        rootView.autoStartDialog.visibility = View.VISIBLE
+        rootView.noDeviceView.alpha = 0.1F
+        rootView.deviceList.alpha = 0.1F
+    }
+
+    //------------------ HIDE AUTO START DIALOG -------------------//
+    private fun hideAutoStartDialog() {
+        rootView.autoStartDialog.visibility = View.GONE
+        rootView.noDeviceView.alpha = 1.0F
+        rootView.deviceList.alpha = 1.0F
+    }
+
+    //------------------ DONE ASKING PERMISSION ------------------//
+    private fun doneAskingPermission() {
+        openAutoStartIntent()
+        hideAutoStartDialog()
+        homeViewModel.doneAskingPermission()
+    }
+
+    //------------------- OPEN SETTINGS ------------------//
+    private fun openAutoStartIntent() {
+        for (intent in Config.POWER_MANAGER_INTENTS) {
+            if (null != activity?.packageManager?.resolveActivity(
+                    intent, PackageManager.MATCH_DEFAULT_ONLY)
+            ) {
+                startActivity(intent)
+                break
+            }
+        }
     }
 
     //-------------------- SHOW NO DEVICE --------------------//

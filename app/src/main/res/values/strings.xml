@@ -64,4 +64,7 @@
     <string name="save_changes">Save Changes</string>
     <string name="please_wait">Please Wait...</string>
     <string name="device_dashboard">Device Dashboard</string>
+    <string name="enable">Enable</string>
+    <string name="auto_start_description">Griffin service needs to work in the background to provide up-to-date device status in real time. Please enable Auto Start permission so that if the background process gets killed accidentally by your device it can restart automatically</string>
+    <string name="enable_auto_start">Enable Auto Start</string>
 </resources>

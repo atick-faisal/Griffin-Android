@@ -71,14 +71,16 @@ class MqttConnectionManagerService : Service() {
     //---------------------------- ON_START_COMMAND() -------------------------//
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Has to display notification in order to keep the service alive
-        if (!client.isConnected && !connecting) {
+        if (!client.isConnected) { // NESTED_IF : v1.1.1-beta
             showPersistentNotification(getString(R.string.device_offline_warning), false)
-            resetClient()
-            connect(client)
+            if (!connecting) {
+                resetClient()
+                connect(client)
+            }
         } else {
             showPersistentNotification(getString(R.string.device_online), true)
         }
-        return START_STICKY
+        return START_STICKY_COMPATIBILITY
     }
 
     //------------------------- ON_BIND() ---------------------//
@@ -361,8 +363,15 @@ class MqttConnectionManagerService : Service() {
         makeMqttServiceRequest()
     }
 
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Log.i(LOG_TAG, "SERVICE: ON LOW MEMORY")
+    }
+
     override fun onDestroy() {
+        Log.i(LOG_TAG, "SERVICE: ON DESTROY CALLED")
         super.onDestroy()
         client.close()
+        retryConnection()
     }
 }
