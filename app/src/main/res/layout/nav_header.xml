@@ -30,7 +30,7 @@
         android:layout_below="@id/appNameText"
         android:layout_centerHorizontal="true"
         android:fontFamily="@font/roboto_light"
-        android:text="v1.1.0-beta"
+        android:text="v1.1.1-beta"
         android:textColor="#EEEEEE"
         android:textSize="14sp" />
 

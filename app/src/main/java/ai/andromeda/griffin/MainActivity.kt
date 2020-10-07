@@ -1,6 +1,8 @@
 package ai.andromeda.griffin
 
 import ai.andromeda.griffin.background.MqttConnectionManagerService
+import ai.andromeda.griffin.config.Config.LOG_TAG
+import ai.andromeda.griffin.config.Config.POWER_MANAGER_INTENTS
 import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
 import ai.andromeda.griffin.scanner.ScannerFragment
 import ai.andromeda.griffin.util.showMessage
@@ -8,6 +10,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -68,12 +71,25 @@ class MainActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == ScannerFragment.REQUEST_CODE_PERMISSIONS) {
             if (!allPermissionsGranted()) {
                 showMessage(applicationContext, "PERMISSIONS NOT GRANTED")
                 finish()
+            }
+            else {
+                Log.i(LOG_TAG, "MAIN_AC: PERMISSION GRANTED")
+            }
+        }
+    }
+
+    private fun askForAutoStartPermission() {
+        for (intent in POWER_MANAGER_INTENTS) {
+            if (null != packageManager.resolveActivity(
+                    intent, PackageManager.MATCH_DEFAULT_ONLY)
+            ) {
+                startActivity(intent)
+                break
             }
         }
     }

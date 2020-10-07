@@ -53,6 +53,55 @@
         android:visibility="gone"
         tools:listitem="@layout/device_list_item"/>
 
+    <RelativeLayout
+        android:id="@+id/autoStartDialog"
+        android:layout_width="match_parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/card_white"
+        android:elevation="16dp"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/autoStartTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_auto_start"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/autoStartDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/autoStartTitle"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/auto_start_description"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/autoStartDescription"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/enableButton"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/enableButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/autoStartDescription"
+            android:layout_alignParentEnd="true"
+            android:text="@string/enable" />
+
+    </RelativeLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
