@@ -5,10 +5,10 @@ import android.content.Intent
 
 object Config {
     const val LOG_TAG = "GRIFFIN_LOG"
-    const val LOCAL_BROKER_IP = "tcp://192.168.0.106:1883" // TODO CHANGE LOCAL IP
+    const val LOCAL_BROKER_IP = "tcp://192.168.0.106:1883" // TODO
     const val SUBSCRIPTION_TOPIC = "Pub/Griffin0"
     const val PUBLISH_TOPIC = "Sub/Griffin0"
-    const val GLOBAL_BROKER_IP = "tcp://broker.hivemq.com:1883"
+    const val GLOBAL_BROKER_IP = "tcp://192.168.0.106:1883" // TODO
     const val ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm"
     const val ID_LENGTH = 8
     const val PREFERENCE_NAME = "APP_SETTINGS"
