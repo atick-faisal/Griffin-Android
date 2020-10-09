@@ -46,6 +46,8 @@ class MqttConnectionManagerService : Service() {
     private var isConnectedLocally = false
     private var connecting = false
 
+    private var retryCounter = 0
+
     // Service Binder Instance
     private val binder = LocalBinder()
 
@@ -105,6 +107,7 @@ class MqttConnectionManagerService : Service() {
                 token.actionCallback = object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken) {
                         connecting = false
+                        retryCounter = 0
                         showMessage(applicationContext, "CONNECTED!")
                         showPersistentNotification(getString(R.string.device_online), true)
                         Log.i(LOG_TAG, "SERVICE: MQTT CONNECTED!")
@@ -121,6 +124,9 @@ class MqttConnectionManagerService : Service() {
                         Log.i(LOG_TAG, "SERVICE: CANNOT CONNECT!")
                         if (!isConnectedLocally) {
                             tryConnectingLocally()
+                        }
+                        else {
+                            retryConnection()
                         }
                         // stopService()
                     }
@@ -164,6 +170,7 @@ class MqttConnectionManagerService : Service() {
             connecting = false
             showMessage(applicationContext, "ERROR WHILE CONNECTING")
             Log.i(LOG_TAG, "ERROR WHILE CONNECTING")
+            retryConnection()
             // stopService()
         }
     }
@@ -350,7 +357,10 @@ class MqttConnectionManagerService : Service() {
     //-------------------- TRY CONNECTING LOCALLY ------------------//
     private fun tryConnectingLocally() {
         Log.i(LOG_TAG, "SERVICE: CONNECTING LOCALLY")
-        isConnectedLocally = true
+
+        retryCounter++
+        if (retryCounter > 2) isConnectedLocally = true
+
         if (::client.isInitialized) {
             client.close()
             client = createMqttAndroidClient(LOCAL_BROKER_IP)
@@ -360,12 +370,8 @@ class MqttConnectionManagerService : Service() {
 
     //-------------------- RETRY CONNECTION ---------------------//
     private fun retryConnection() {
+        Log.i(LOG_TAG, "SERVICE: RETRYING CONNECTION")
         makeMqttServiceRequest()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        Log.i(LOG_TAG, "SERVICE: ON LOW MEMORY")
     }
 
     override fun onDestroy() {

@@ -164,14 +164,16 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     //-------------------- JSON DATA TO PUBLISH ---------------//
     private fun getPayload(): String {
         val payload = JSONObject()
+        val sensorArray = sensors.map { sensorModel -> sensorModel.sensorStatus }
         try {
             payload.put("Device_ID", deviceId)
             payload.put("Count", ++count)
             payload.put("Command", "Control")
             payload.put("Number_of_Sensors", numberOfSensors)
-            payload.put("Sensors", sensors.map {
-                    sensorModel -> sensorModel.sensorStatus
-            })
+            for (sensor in sensorArray) {
+                payload.accumulate("Sensors", sensor)
+            }
+
         } catch (e: JSONException) {
             e.printStackTrace()
         }

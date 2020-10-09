@@ -10,7 +10,7 @@ object Config {
     const val PUBLISH_TOPIC = "Sub/Griffin0"
     const val GLOBAL_BROKER_IP = "tcp://broker.hivemq.com:1883"
     const val ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm"
-    const val ID_LENGTH = 16
+    const val ID_LENGTH = 8
     const val PREFERENCE_NAME = "APP_SETTINGS"
     const val PERSISTENT_NOTIFICATION_TITLE = "Griffin Service"
     const val PERSISTENT_NOTIFICATION_ID = 10010
@@ -24,6 +24,7 @@ object Config {
     const val RESTART_REQUEST_KEY = "RESTART_MQTT"
     const val WAIT_FOR_FEEDBACK = true
     const val AUTO_START_KEY = "AUTO_START"
+    const val RETRY_INTERVAL = 5000L
 
     //------------- POWER MANAGER INTENTS --------------//
     val POWER_MANAGER_INTENTS = arrayOf(

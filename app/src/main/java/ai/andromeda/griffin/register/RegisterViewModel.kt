@@ -145,7 +145,7 @@ class RegisterViewModel(application: Application) :
 
     //--------------------- CREATE JSON FORMATTED DATA -----------------//
     private fun getJsonObject(data: DeviceEntity): String {
-        var count = loadCount(data.deviceId.toString())
+        var count = loadCount(data.deviceId)
         val payload = JSONObject()
         try {
             payload.put("Device_ID", data.deviceId)
@@ -159,7 +159,7 @@ class RegisterViewModel(application: Application) :
             payload.put("Contact_2", data.contact2)
             payload.put("Contact_3", data.contact3)
             payload.put("Message", data.customMessage)
-            saveCount(data.deviceId.toString(), count)
+            saveCount(data.deviceId, count)
         } catch (e: JSONException) {
             Log.i(LOG_TAG, "REGISTER_VM: JSON ERROR")
             e.printStackTrace()
@@ -214,7 +214,7 @@ class RegisterViewModel(application: Application) :
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
 
         // Saving Device Name to Show in Future Alert Notifications
-        deviceId?.let {
+        deviceId.let {
             SharedPreferencesManager.putString(
                 getApplication(), deviceId, deviceName.toString()
             )
@@ -225,7 +225,7 @@ class RegisterViewModel(application: Application) :
         allId = if (allId != null) {
             "$allId,$deviceId"
         } else {
-            "$deviceId"
+            deviceId
         }
         SharedPreferencesManager.putString(getApplication(), DEVICE_ID_KEY, allId)
 
