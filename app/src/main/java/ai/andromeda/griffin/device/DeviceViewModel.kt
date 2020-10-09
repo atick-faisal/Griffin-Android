@@ -157,8 +157,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     private fun publishData() {
         val payload = getPayload()
         if (mBound) {
-            // mqttService.publish("Sub/$deviceId", payload)
-            mqttService.publish("Debug", payload) // TODO CHANGE PUBLISH TOPIC
+            mqttService.publish("Sub/$deviceId", payload)
         }
     }
 

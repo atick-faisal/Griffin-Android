@@ -13,7 +13,6 @@ import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_TITLE
 import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
-import ai.andromeda.griffin.config.Config.RETRY_INTERVAL
 import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
@@ -25,9 +24,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
