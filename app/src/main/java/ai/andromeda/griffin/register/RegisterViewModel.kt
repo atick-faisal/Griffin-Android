@@ -77,7 +77,9 @@ class RegisterViewModel(application: Application) :
                     ) {
                         if (message.toString() == "configured") {
                             showMessage(getApplication(), "REGISTERED")
-                            onRegistrationSuccessful()
+                            if (_registrationSuccessful.value == null) {
+                                onRegistrationSuccessful()
+                            }
                         }
                         Log.i(LOG_TAG, "REGISTER_VM: MESSAGE : " + message.toString())
                     }
@@ -179,10 +181,6 @@ class RegisterViewModel(application: Application) :
     //---------------------- REG COMPLETE CALLBACKS ------------------//
     private fun onRegistrationSuccessful() {
         _registrationSuccessful.value = true
-    }
-
-    fun doneNavigatingToHome() {
-        _registrationSuccessful.value = null
     }
 
     //-------------------- DATABASE OPERATIONS -----------//
