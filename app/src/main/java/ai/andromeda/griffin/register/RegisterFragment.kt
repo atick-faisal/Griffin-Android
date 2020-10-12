@@ -56,7 +56,6 @@ class RegisterFragment : Fragment() {
                 registerViewModel.saveData()
                 hideProgress()
                 navigateToHome()
-                registerViewModel.doneNavigatingToHome()
             }
         })
 
