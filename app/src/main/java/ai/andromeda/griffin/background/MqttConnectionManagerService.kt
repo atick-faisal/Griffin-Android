@@ -16,6 +16,8 @@ import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
 import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
+import ai.andromeda.griffin.receiver.BootReceiver
+import ai.andromeda.griffin.receiver.ConnectionRequestReceiver
 import ai.andromeda.griffin.util.SharedPreferencesManager
 import ai.andromeda.griffin.util.makeMqttServiceRequest
 import ai.andromeda.griffin.util.showMessage
@@ -309,7 +311,11 @@ class MqttConnectionManagerService : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         notificationIntent.putExtra(RESTART_REQUEST_KEY, true)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, notificationIntent, 0
+            this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val reconnectIntent = Intent(this, ConnectionRequestReceiver::class.java)
+        val reconnectPendingIntent = PendingIntent.getBroadcast(
+            this, 1, reconnectIntent, 0
         )
         val notification = NotificationCompat.Builder(this, PERSISTENT_CHANNEL_ID)
             .setContentTitle(PERSISTENT_NOTIFICATION_TITLE)
@@ -321,10 +327,19 @@ class MqttConnectionManagerService : Service() {
                 }
 
             )
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(pendingIntent)
-            .build()
 
-        startForeground(PERSISTENT_NOTIFICATION_ID, notification)
+        //------------- RECONNECT BUTTON ---------------//
+        if (!connected) {
+            notification.addAction(
+                R.drawable.ic_alert,
+                getString(R.string.reconnect),
+                reconnectPendingIntent
+            )
+        }
+
+        startForeground(PERSISTENT_NOTIFICATION_ID, notification.build())
     }
 
     //----------------------- ALERT NOTIFICATION -----------------------//
@@ -338,10 +353,10 @@ class MqttConnectionManagerService : Service() {
             .setContentText(content)
             .setSmallIcon(R.drawable.ic_secure)
             .setContentIntent(pendingIntent)
-            .build()
+            .setPriority(NotificationCompat.PRIORITY_MAX)
 
         with(NotificationManagerCompat.from(this)) {
-            notify(ALERT_NOTIFICATION_ID, notification)
+            notify(ALERT_NOTIFICATION_ID, notification.build())
         }
     }
 

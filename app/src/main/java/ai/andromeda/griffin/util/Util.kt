@@ -4,15 +4,16 @@ import ai.andromeda.griffin.background.MqttWorker
 import ai.andromeda.griffin.config.Config.ALLOWED_CHARACTERS
 import ai.andromeda.griffin.config.Config.ID_LENGTH
 import ai.andromeda.griffin.config.Config.LOG_TAG
+import ai.andromeda.griffin.config.Config.WORK_TAG
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import android.widget.Toast
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.google.gson.Gson
 import java.util.*
+
 
 fun generateDeviceId(): String {
     val random = Random()
@@ -41,5 +42,15 @@ fun makeMqttServiceRequest() {
         .setConstraints(constraints)
         .build()
 
-    WorkManager.getInstance().enqueue(workRequest)
+    val workManager = WorkManager.getInstance()
+
+    workManager.enqueueUniqueWork(WORK_TAG, ExistingWorkPolicy.KEEP, workRequest)
+}
+
+fun isWiFiConnected(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
+            as ConnectivityManager
+    val activeNetwork =
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+    return activeNetwork?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
 }

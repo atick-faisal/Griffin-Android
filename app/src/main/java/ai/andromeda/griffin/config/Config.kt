@@ -25,6 +25,7 @@ object Config {
     const val WAIT_FOR_FEEDBACK = true
     const val AUTO_START_KEY = "AUTO_START"
     const val RETRY_INTERVAL = 5000L
+    const val WORK_TAG = "GRIFFIN_BACKGROUND_WORK"
 
     //------------- POWER MANAGER INTENTS --------------//
     val POWER_MANAGER_INTENTS = arrayOf(

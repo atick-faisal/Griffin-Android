@@ -38,7 +38,9 @@ class App : Application() {
                 PERSISTENT_CHANNEL_ID,
                 "MQTT SERVICE CHANNEL",
                 NotificationManager.IMPORTANCE_LOW
-            )
+            ).apply {
+                setShowBadge(false)
+            }
 
             val alertNotificationChannel = NotificationChannel(
                 ALERT_CHANNEL_ID,
