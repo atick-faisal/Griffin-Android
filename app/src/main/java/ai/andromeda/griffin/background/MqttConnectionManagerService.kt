@@ -13,10 +13,8 @@ import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_TITLE
 import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
-import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
-import ai.andromeda.griffin.receiver.BootReceiver
 import ai.andromeda.griffin.receiver.ConnectionRequestReceiver
 import ai.andromeda.griffin.util.SharedPreferencesManager
 import ai.andromeda.griffin.util.makeMqttServiceRequest
@@ -114,7 +112,6 @@ class MqttConnectionManagerService : Service() {
                         showPersistentNotification(getString(R.string.device_online), true)
                         Log.i(LOG_TAG, "SERVICE: MQTT CONNECTED!")
                         subscribeToAllDevice()
-                        subscribe(SUBSCRIPTION_TOPIC) // TODO REMOVE THIS
                     }
 
                     override fun onFailure(
@@ -142,12 +139,6 @@ class MqttConnectionManagerService : Service() {
                     ) {
                         showMessage(applicationContext, message.toString())
                         message?.let { processMessage(message.toString()) }
-
-                        //------------------SHIT HAPPENED----------------------//
-                        if ("SHIT" == message.toString())
-                            showAlertNotification("SH!T HAPPENED")
-                        //-----------------------------------------------------//
-
                         Log.i(LOG_TAG, "SERVICE: MQTT MESSAGE : " + message.toString())
                     }
 
@@ -257,9 +248,7 @@ class MqttConnectionManagerService : Service() {
                     val deviceName = SharedPreferencesManager.getString(
                         applicationContext, deviceId
                     )
-                    showAlertNotification(
-                        getString(R.string.sensor_breach, deviceName.toString())
-                    )
+                    showAlertNotification(deviceName)
                 }
             }
         } catch (e: JSONException) {
@@ -343,14 +332,14 @@ class MqttConnectionManagerService : Service() {
     }
 
     //----------------------- ALERT NOTIFICATION -----------------------//
-    private fun showAlertNotification(content: String) {
+    private fun showAlertNotification(deviceName: String?) {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, 0
         )
         val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
             .setContentTitle(ALERT_NOTIFICATION_TITLE)
-            .setContentText(content)
+            .setContentText(getString(R.string.sensor_breach, deviceName.toString()))
             .setSmallIcon(R.drawable.ic_secure)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_MAX)
