@@ -14,8 +14,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.json.JSONException
@@ -40,7 +38,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
     // ----------------- LIVE DATA VARIABLES -----------------//
 
     // This is for refreshing the sensor list
-    // When new message comes the device list is refreshed automatica
+    // When new message comes the device list is refreshed automatically
     val deviceList = database.getAll()
 
     private val _sensorList = MutableLiveData<List<SensorModel>>()
@@ -68,7 +66,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
             val nameArray = names.split(",")
             val valueArray = values.split(",")
 
-            // ------ TOTAL SENSORS -------//
+            // ------- TOTAL SENSORS -------//
             // CHECKING SIZE OF NAME ARRAY CAUSE INCOMING MESSAGE
             // CAN'T ALTER THIS
             numberOfSensors = nameArray.size - 1
@@ -78,7 +76,8 @@ class DeviceViewModel(application: Application, val deviceId: String) :
 
             for (i in 0 until numberOfSensors) {
                 try {
-                    sensors.add(SensorModel(
+                    sensors.add(
+                        SensorModel(
                             sensorName = nameArray[i],
                             sensorStatus = valueArray[i].toInt()
                         )
@@ -113,13 +112,12 @@ class DeviceViewModel(application: Application, val deviceId: String) :
                     publishData()
 
                     Log.i(LOG_TAG, "DEVICE_VM: SENSOR[$position] = ${sensor.sensorStatus}")
-                }
-                else {
+                } else {
                     showMessage(getApplication(), "NO CONNECTION")
                 }
             }
 
-        //----------- PARSING ERROR ------------//
+            //----------- PARSING ERROR ------------//
         } catch (e: ArrayIndexOutOfBoundsException) {
             e.printStackTrace()
         }
@@ -205,7 +203,7 @@ class DeviceViewModel(application: Application, val deviceId: String) :
         val sensorValues = sensors.map { it.sensorStatus }
         Log.i(LOG_TAG, "DEVICE_VM: SENSOR VALUES -> $sensorValues")
         val lockedSensors = sensorValues.size - sensorValues.sum()
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             val device = get(deviceId)
             device?.let {
                 if (sensorValues.size == device.numSensors) {

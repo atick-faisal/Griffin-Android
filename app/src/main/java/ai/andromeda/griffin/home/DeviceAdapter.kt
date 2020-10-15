@@ -29,6 +29,7 @@ class DeviceAdapter(private val clickListener: (device: DeviceEntity) -> Unit) :
         private val numUnlockedText: TextView = view.numUnlockedText
         private val res = view.context.resources
 
+        //---------------- INSTANTIATE ----------------//
         companion object {
             fun from(parent: ViewGroup): DeviceViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
@@ -52,10 +53,12 @@ class DeviceAdapter(private val clickListener: (device: DeviceEntity) -> Unit) :
         }
     }
 
+    //-------------- ON CREATE VIEW HOLDER ---------------//
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
         return DeviceViewHolder.from(parent)
     }
 
+    //------------------ ON BIND VIEW HOLDER ----------------//
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val item = deviceList[position]
         holder.bind(item)
@@ -64,5 +67,6 @@ class DeviceAdapter(private val clickListener: (device: DeviceEntity) -> Unit) :
         }
     }
 
+    //------------- ITEM COUNT -----------//
     override fun getItemCount() = deviceList.size
 }

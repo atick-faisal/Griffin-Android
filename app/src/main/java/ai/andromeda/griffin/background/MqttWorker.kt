@@ -17,13 +17,10 @@ class MqttWorker(val context: Context, params: WorkerParameters) : Worker(contex
     }
 
     private fun startMqttService() {
-        val intent = Intent(
-            context, MqttConnectionManagerService::class.java
-        )
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+        val intent = Intent(context, MqttConnectionManagerService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
-        }
-        else {
+        } else {
             context.startService(intent)
         }
     }

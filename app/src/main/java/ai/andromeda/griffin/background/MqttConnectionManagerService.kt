@@ -13,9 +13,9 @@ import ai.andromeda.griffin.config.Config.PERSISTENT_CHANNEL_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_ID
 import ai.andromeda.griffin.config.Config.PERSISTENT_NOTIFICATION_TITLE
 import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
-import ai.andromeda.griffin.config.Config.SUBSCRIPTION_TOPIC
 import ai.andromeda.griffin.database.DeviceDatabase
 import ai.andromeda.griffin.database.DeviceEntity
+import ai.andromeda.griffin.receiver.ConnectionRequestReceiver
 import ai.andromeda.griffin.util.SharedPreferencesManager
 import ai.andromeda.griffin.util.makeMqttServiceRequest
 import ai.andromeda.griffin.util.showMessage
@@ -66,7 +66,6 @@ class MqttConnectionManagerService : Service() {
         // Only create client and database instance once when service started
         deviceDatabase = DeviceDatabase.getInstance(this.applicationContext)
         client = createMqttAndroidClient(GLOBAL_BROKER_IP)
-
         Log.i(LOG_TAG, "SERVICE: NEW MQTT CLIENT CREATED!")
     }
 
@@ -112,7 +111,6 @@ class MqttConnectionManagerService : Service() {
                         showPersistentNotification(getString(R.string.device_online), true)
                         Log.i(LOG_TAG, "SERVICE: MQTT CONNECTED!")
                         subscribeToAllDevice()
-                        subscribe(SUBSCRIPTION_TOPIC) // TODO REMOVE THIS
                     }
 
                     override fun onFailure(
@@ -140,12 +138,6 @@ class MqttConnectionManagerService : Service() {
                     ) {
                         showMessage(applicationContext, message.toString())
                         message?.let { processMessage(message.toString()) }
-
-                        //------------------SHIT HAPPENED----------------------//
-                        if ("SHIT" == message.toString())
-                            showAlertNotification("SH!T HAPPENED")
-                        //-----------------------------------------------------//
-
                         Log.i(LOG_TAG, "SERVICE: MQTT MESSAGE : " + message.toString())
                     }
 
@@ -216,7 +208,7 @@ class MqttConnectionManagerService : Service() {
         }
     }
 
-    //------------------ PUBLISH ----------------------//
+    //-------------------- PUBLISH ----------------------//
     fun publish(topic: String, payload: String) {
         try {
             if (client.isConnected) {
@@ -255,9 +247,7 @@ class MqttConnectionManagerService : Service() {
                     val deviceName = SharedPreferencesManager.getString(
                         applicationContext, deviceId
                     )
-                    showAlertNotification(
-                        getString(R.string.sensor_breach, deviceName.toString())
-                    )
+                    showAlertNotification(deviceName)
                 }
             }
         } catch (e: JSONException) {
@@ -309,7 +299,11 @@ class MqttConnectionManagerService : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         notificationIntent.putExtra(RESTART_REQUEST_KEY, true)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, notificationIntent, 0
+            this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val reconnectIntent = Intent(this, ConnectionRequestReceiver::class.java)
+        val reconnectPendingIntent = PendingIntent.getBroadcast(
+            this, 1, reconnectIntent, 0
         )
         val notification = NotificationCompat.Builder(this, PERSISTENT_CHANNEL_ID)
             .setContentTitle(PERSISTENT_NOTIFICATION_TITLE)
@@ -321,27 +315,36 @@ class MqttConnectionManagerService : Service() {
                 }
 
             )
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(pendingIntent)
-            .build()
 
-        startForeground(PERSISTENT_NOTIFICATION_ID, notification)
+        //------------- RECONNECT BUTTON ---------------//
+        if (!connected) {
+            notification.addAction(
+                R.drawable.ic_alert,
+                getString(R.string.reconnect),
+                reconnectPendingIntent
+            )
+        }
+
+        startForeground(PERSISTENT_NOTIFICATION_ID, notification.build())
     }
 
     //----------------------- ALERT NOTIFICATION -----------------------//
-    private fun showAlertNotification(content: String) {
+    private fun showAlertNotification(deviceName: String?) {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, 0
         )
         val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
             .setContentTitle(ALERT_NOTIFICATION_TITLE)
-            .setContentText(content)
-            .setSmallIcon(R.drawable.ic_secure)
+            .setContentText(getString(R.string.sensor_breach, deviceName.toString()))
+            .setSmallIcon(R.drawable.ic_security)
             .setContentIntent(pendingIntent)
-            .build()
+            .setPriority(NotificationCompat.PRIORITY_MAX)
 
         with(NotificationManagerCompat.from(this)) {
-            notify(ALERT_NOTIFICATION_ID, notification)
+            notify(ALERT_NOTIFICATION_ID, notification.build())
         }
     }
 

@@ -74,7 +74,9 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_deviceDetailsFragment_to_reconfigureFragment"
-            app:destination="@id/reconfigureFragment" />
+            app:destination="@id/reconfigureFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/shareFragment"

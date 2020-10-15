@@ -4,16 +4,17 @@ import ai.andromeda.griffin.background.MqttWorker
 import ai.andromeda.griffin.config.Config.ALLOWED_CHARACTERS
 import ai.andromeda.griffin.config.Config.ID_LENGTH
 import ai.andromeda.griffin.config.Config.LOG_TAG
+import ai.andromeda.griffin.config.Config.WORK_TAG
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import android.widget.Toast
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.google.gson.Gson
 import java.util.*
 
+//--------- DEVICE ID GENERATOR ------------//
 fun generateDeviceId(): String {
     val random = Random()
     val sb = StringBuilder(ID_LENGTH)
@@ -22,15 +23,18 @@ fun generateDeviceId(): String {
     return sb.toString()
 }
 
+//--------------- TOAST MESSAGES ---------------//
 fun showMessage(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
+//---------------- JSON TO INT ARRAY ------------------//
 fun toArray(json: String): IntArray? {
     val arrayParser = Gson()
     return arrayParser.fromJson(json, IntArray::class.java)
 }
 
+//----------------- MQTT START REQUEST ---------------//
 fun makeMqttServiceRequest() {
     Log.i(LOG_TAG, "UTIL: MQTT SERVICE REQUESTED")
     val constraints = Constraints.Builder()
@@ -41,5 +45,15 @@ fun makeMqttServiceRequest() {
         .setConstraints(constraints)
         .build()
 
-    WorkManager.getInstance().enqueue(workRequest)
+    val workManager = WorkManager.getInstance()
+    workManager.enqueueUniqueWork(WORK_TAG, ExistingWorkPolicy.KEEP, workRequest)
+}
+
+//--------------------- CHECK WIFI CONNECTION -----------------------//
+fun isWiFiConnected(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
+            as ConnectivityManager
+    val activeNetwork =
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+    return activeNetwork?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
 }

@@ -30,7 +30,8 @@ class ShareFragment : Fragment() {
 
         //--------------------- ARGUMENTS -----------------------//
         deviceId = ShareFragmentArgs.fromBundle(requireArguments()).deviceId ?: ""
-        deviceName = ShareFragmentArgs.fromBundle(requireArguments()).deviceName ?: getString(R.string.unknown_device)
+        deviceName = ShareFragmentArgs.fromBundle(requireArguments()).deviceName
+            ?: getString(R.string.unknown_device)
 
         //----------------------- VIEW MODEL SETUP -----------------------//
         val shareViewModelFactory = ShareViewModelFactory(application, deviceId)

@@ -121,11 +121,9 @@ class ReconfigureViewModel(application: Application, val deviceId: String) :
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
 
         // Saving Device Name to Show in Future Alert Notifications
-        deviceId?.let {
-            SharedPreferencesManager.putString(
-                getApplication(), deviceId, deviceName.toString()
-            )
-        }
+        SharedPreferencesManager.putString(
+            getApplication(), deviceId, deviceName.toString()
+        )
 
         Log.i(LOG_TAG, "RECONFIGURE_VM: WRITING TO SP")
     }

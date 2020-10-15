@@ -45,7 +45,7 @@ class DeviceFragment : Fragment() {
         }
     }
 
-    //------------- ON_CREATE_VIEW() -----------------//
+    //---------------- ON_CREATE_VIEW() -----------------//
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,9 +82,11 @@ class DeviceFragment : Fragment() {
             Log.i(LOG_TAG, "CLICK AT : $position")
             when (view) {
                 // CLICKED ON THE IMAGE BUTTON
-                0 -> deviceViewModel.toggleStatusAt(position)
+                SensorView.CONTROL_BUTTON -> {
+                    deviceViewModel.toggleStatusAt(position)
+                }
                 // CLICKED ON EDIT
-                1 -> {
+                SensorView.EDIT_BUTTON -> {
                     currentPosition = position
                     showEditDialog()
                 }
@@ -98,8 +100,8 @@ class DeviceFragment : Fragment() {
         rootView.cancelButton.setOnClickListener { onCancelButtonClick() }
         rootView.cancelDeleteButton.setOnClickListener { hideDeleteDialog() }
         rootView.deleteDialogButton.setOnClickListener {
-                deviceViewModel.removeDevice()
-                navigateToHome()
+            deviceViewModel.removeDevice()
+            navigateToHome()
         }
 
         //-------------------- MENU ------------------//
@@ -224,7 +226,7 @@ class DeviceFragment : Fragment() {
         }
     }
 
-    //---------- ON_STOP() -----------//
+    //------------ ON_STOP() -----------//
     override fun onStop() {
         super.onStop()
         activity?.unbindService(connection)

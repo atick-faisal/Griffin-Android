@@ -70,7 +70,7 @@ class ReconfigureFragment : Fragment() {
         val application = requireActivity().application
 
         //--------------------------- ARGUMENTS -----------------------//
-        deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId ?: ""
+        deviceId = DeviceFragmentArgs.fromBundle(requireArguments()).deviceId ?: "noobmaster69"
 
         //--------------------- CONFIGURE VIEW MODEL ---------------------//
         val reconfigureViewModelFactory = ReconfigureViewModelFactory(application, deviceId)
@@ -187,8 +187,6 @@ class ReconfigureFragment : Fragment() {
                     reconfigureViewModel.updateDevice(data)
                     reconfigureViewModel.publishData(data)
                     showFakeProgress() // TODO MAKE REAL PROGRESS
-                    //navigateToHome()
-
                 }
             }
         }

@@ -29,16 +29,16 @@ class ShareViewModel(
     private val _device = MutableLiveData<DeviceEntity>()
     val device: LiveData<DeviceEntity>
         get() = _device
-    
+
     private val _qrBitmap = MutableLiveData<Bitmap>()
     val qrBitmap: LiveData<Bitmap>
         get() = _qrBitmap
 
     //------------------- SENSORS ---------------------//
-    val sensorNames = SharedPreferencesManager.getString(
+    private val sensorNames = SharedPreferencesManager.getString(
         getApplication(), "$deviceId/name"
     )
-    val sensorValues = SharedPreferencesManager.getString(
+    private val sensorValues = SharedPreferencesManager.getString(
         getApplication(), "$deviceId/value"
     )
 
@@ -54,7 +54,7 @@ class ShareViewModel(
         val qrgEncoder =
             QRGEncoder(data, null, QRGContents.Type.TEXT, 500)
         try {
-           _qrBitmap.value = qrgEncoder.encodeAsBitmap()
+            _qrBitmap.value = qrgEncoder.encodeAsBitmap()
         } catch (e: WriterException) {
             e.printStackTrace()
         }
@@ -95,6 +95,7 @@ class ShareViewModel(
             _device.value = getDeviceFromDatabase()
         }
     }
+
     private suspend fun getDeviceFromDatabase(): DeviceEntity? {
         return database.get(deviceId = deviceId)
     }
