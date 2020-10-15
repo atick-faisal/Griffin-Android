@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
+//---------- USEFUL IN CASE OF LOCAL ESP SERVER WITH NO INTERNET ACCESS ----------//
 class ConnectionRequestReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (isWiFiConnected(context)) {

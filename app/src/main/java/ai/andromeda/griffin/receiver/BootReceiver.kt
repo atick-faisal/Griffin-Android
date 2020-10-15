@@ -9,10 +9,14 @@ import android.content.Intent
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         showMessage(context, "BOOT COMPLETE")
-        if (
-            intent.action == Intent.ACTION_BOOT_COMPLETED
-            || intent.action == Intent.ACTION_SHUTDOWN
-        )
-            makeMqttServiceRequest()
+        
+        //----------- TRYING REALLY HARD TO CAPTURE THE RIGHT INTENT! ---------//
+        when (intent.action) {
+            Intent.ACTION_BOOT_COMPLETED -> makeMqttServiceRequest()
+            Intent.ACTION_LOCKED_BOOT_COMPLETED -> makeMqttServiceRequest()
+            Intent.ACTION_SHUTDOWN -> makeMqttServiceRequest()
+            Intent.ACTION_REBOOT -> makeMqttServiceRequest()
+            else -> return
+        }
     }
 }

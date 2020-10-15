@@ -66,7 +66,6 @@ class MqttConnectionManagerService : Service() {
         // Only create client and database instance once when service started
         deviceDatabase = DeviceDatabase.getInstance(this.applicationContext)
         client = createMqttAndroidClient(GLOBAL_BROKER_IP)
-
         Log.i(LOG_TAG, "SERVICE: NEW MQTT CLIENT CREATED!")
     }
 
@@ -209,7 +208,7 @@ class MqttConnectionManagerService : Service() {
         }
     }
 
-    //------------------ PUBLISH ----------------------//
+    //-------------------- PUBLISH ----------------------//
     fun publish(topic: String, payload: String) {
         try {
             if (client.isConnected) {
@@ -340,7 +339,7 @@ class MqttConnectionManagerService : Service() {
         val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
             .setContentTitle(ALERT_NOTIFICATION_TITLE)
             .setContentText(getString(R.string.sensor_breach, deviceName.toString()))
-            .setSmallIcon(R.drawable.ic_secure)
+            .setSmallIcon(R.drawable.ic_security)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_MAX)
 

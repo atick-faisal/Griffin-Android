@@ -14,22 +14,25 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 
-class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase) :
+class ScannerViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    val database = deviceDatabase.deviceDao
+    val database = DeviceDatabase.getInstance(application).deviceDao
     private var device: DeviceEntity? = null
     private var sensorNames: String? = null
     private var sensorValues: String? = null
 
+    //---------------- LIVE DATA ---------------//
     private val _deviceName = MutableLiveData<String>()
     val deviceName: LiveData<String>
         get() = _deviceName
 
+    //------------ INIT ------------//
     init {
         _deviceName.value = null
     }
 
+    //------------- DATA PARSING --------------//
     fun parseData(data: String) {
         try {
             val json = JSONObject(data)
@@ -53,7 +56,7 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
                 contact1 = contact1,
                 contact2 = contact2,
                 contact3 = contact3,
-                numSensors =  numSensors,
+                numSensors = numSensors,
                 customMessage = customMessage,
                 lockedSensors = lockedSensors
             )
@@ -65,11 +68,13 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
         }
     }
 
+    //------------ TRY AGAIN -----------//
     fun onTryAgain() {
         _deviceName.value = null
         device = null
     }
 
+    //------------ SAVE DATA ------------//
     fun saveData() {
         if (device != null) {
             viewModelScope.launch {
@@ -84,6 +89,7 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
         }
     }
 
+    //------------- WRITE TO SP ---------------//
     private fun writeToSharedPreferences() {
         device?.let {
             val nameKey = device?.deviceId.toString() + "/name"
@@ -93,6 +99,7 @@ class ScannerViewModel(application: Application, deviceDatabase: DeviceDatabase)
         }
     }
 
+    //------------ DATABASE -----------//
     private suspend fun insert() {
         device?.let { database.insert(it) }
     }

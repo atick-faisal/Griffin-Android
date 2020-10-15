@@ -2,7 +2,6 @@ package ai.andromeda.griffin.scanner
 
 import ai.andromeda.griffin.R
 import ai.andromeda.griffin.config.Config.LOG_TAG
-import ai.andromeda.griffin.database.DeviceDatabase
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
@@ -39,32 +38,31 @@ class ScannerFragment : Fragment() {
 
     private lateinit var scanner: BarcodeScanner
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var rootView: View
-    private lateinit var deviceDatabase: DeviceDatabase
     private lateinit var scannerViewModel: ScannerViewModel
+    private lateinit var rootView: View
 
     private var qrRecognized: Boolean = false
 
+    //--------------- CONSTANTS -------------------//
     companion object {
         const val REQUEST_CODE_PERMISSIONS = 1001
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 
+    //------------------ ON CREATE VIEW -----------------//
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_scanner, container, false)
-
         val application = requireActivity().application
-        deviceDatabase = DeviceDatabase.getInstance(application)
 
-        val scannerViewModelFactory = ScannerViewModelFactory(application, deviceDatabase)
+        //------------------ VIEW MODEL SETUP ------------------//
+        val scannerViewModelFactory = ScannerViewModelFactory(application)
         scannerViewModel = ViewModelProvider(this, scannerViewModelFactory)
             .get(ScannerViewModel::class.java)
 
-        (context as AppCompatActivity).supportActionBar?.title = getString(R.string.qr_scanner)
-
+        //---------------- LIVE DATA OBSERVERS ----------------//
         scannerViewModel.deviceName.observe(viewLifecycleOwner, Observer {
             it?.let {
                 rootView.deviceNameText.text = it
@@ -75,20 +73,11 @@ class ScannerFragment : Fragment() {
             }
         })
 
-        rootView.addDeviceButton.setOnClickListener {
-            scannerViewModel.saveData()
-            findNavController().navigate(
-                ScannerFragmentDirections.actionScannerFragmentToHomeFragment()
-            )
-        }
+        //---------------- ON CLICK LISTENERS -------------------//
+        rootView.addDeviceButton.setOnClickListener { addDevice() }
+        rootView.tryAgainButton.setOnClickListener { tryAgain() }
 
-        rootView.tryAgainButton.setOnClickListener {
-            rootView.tryAgainButton.isEnabled = false
-            rootView.deviceNameText.text = getString(R.string.scanning)
-            scannerViewModel.onTryAgain()
-            restartCamera()
-        }
-
+        //--------------- CAMERA SETUP ---------------//
         // Scanner Options
         val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
@@ -107,12 +96,32 @@ class ScannerFragment : Fragment() {
                 REQUEST_CODE_PERMISSIONS
             )
         }
-
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        //---------------------- MENU -------------------//
+        (context as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.qr_scanner)
 
         return rootView
     }
 
+    //------------ ADD DEVICE ----------//
+    private fun addDevice() {
+        scannerViewModel.saveData()
+        findNavController().navigate(
+            ScannerFragmentDirections.actionScannerFragmentToHomeFragment()
+        )
+    }
+
+    //-------------- RETRY -------------//
+    private fun tryAgain() {
+        rootView.tryAgainButton.isEnabled = false
+        rootView.deviceNameText.text = getString(R.string.scanning)
+        scannerViewModel.onTryAgain()
+        restartCamera()
+    }
+
+    //-------------------- START CAMERA --------------------//
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
@@ -147,24 +156,27 @@ class ScannerFragment : Fragment() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageAnalyzer)
+                    this, cameraSelector, preview, imageAnalyzer
+                )
 
-            } catch(exc: Exception) {
+            } catch (exc: Exception) {
                 Log.e(LOG_TAG, "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    //////////////////////////////////////////////////////////////////
+    //------------------ ASK FOR CAMERA PERMISSION ----------------------//
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            requireContext(), it) == PackageManager.PERMISSION_GRANTED
+            requireContext(), it
+        ) == PackageManager.PERMISSION_GRANTED
     }
-    //////////////////////////////////////////////////////////////////
+
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
+        IntArray
+    ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera()
@@ -172,13 +184,14 @@ class ScannerFragment : Fragment() {
                 Toast.makeText(
                     requireNotNull(activity).application,
                     "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
                 activity?.finish()
             }
         }
     }
 
-    /////////////////////////////////////////////////////////////////
+    //------------------- PROCESS QR CODE ------------------//
     inner class CodeScanner(private val listener: QrListener) :
         ImageAnalysis.Analyzer {
         @SuppressLint("UnsafeExperimentalUsageError")
@@ -204,10 +217,12 @@ class ScannerFragment : Fragment() {
         }
     }
 
+    //------------ RESTART CAMERA ----------//
     private fun restartCamera() {
         qrRecognized = false
     }
 
+    //----------- ON DESTROY ----------//
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()

@@ -35,7 +35,7 @@
     <string name="add_device">Add Device</string>
     <string name="try_again">Try Again</string>
     <string name="done">Done</string>
-    <string name="sensor_breach">A Security Breach Occurred in %s</string>
+    <string name="sensor_breach">Security Breach Occurred at %s</string>
     <string name="sensors">Sensors</string>
     <string name="delete">Delete</string>
     <string name="delete_this_device">Delete This Device</string>
@@ -68,4 +68,6 @@
     <string name="auto_start_description">Griffin service needs to work in the background to provide up-to-date device status in real time. Please enable Auto Start permission so that if the background process gets killed accidentally by your device it can restart automatically</string>
     <string name="enable_auto_start">Enable Auto Start</string>
     <string name="reconnect">Reconnect</string>
+    <string name="persistent_channel_description">Background Connectivity Monitor</string>
+    <string name="alert_channel_description">Secruity Breach Notification</string>
 </resources>

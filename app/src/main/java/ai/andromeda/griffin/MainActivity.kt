@@ -2,7 +2,6 @@ package ai.andromeda.griffin
 
 import ai.andromeda.griffin.background.MqttConnectionManagerService
 import ai.andromeda.griffin.config.Config.LOG_TAG
-import ai.andromeda.griffin.config.Config.POWER_MANAGER_INTENTS
 import ai.andromeda.griffin.config.Config.RESTART_REQUEST_KEY
 import ai.andromeda.griffin.scanner.ScannerFragment
 import ai.andromeda.griffin.util.showMessage
@@ -79,17 +78,6 @@ class MainActivity : AppCompatActivity() {
             }
             else {
                 Log.i(LOG_TAG, "MAIN_AC: PERMISSION GRANTED")
-            }
-        }
-    }
-
-    private fun askForAutoStartPermission() {
-        for (intent in POWER_MANAGER_INTENTS) {
-            if (null != packageManager.resolveActivity(
-                    intent, PackageManager.MATCH_DEFAULT_ONLY)
-            ) {
-                startActivity(intent)
-                break
             }
         }
     }

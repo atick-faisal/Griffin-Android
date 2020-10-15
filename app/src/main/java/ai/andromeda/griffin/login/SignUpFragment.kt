@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_sign_up.view.*
 
+//---------------- THIS FRAGMENT HAS BEEN DEPRECATED IN 1.1.0-beta RELEASE -------------//
+
 class SignUpFragment : Fragment() {
 
     override fun onCreateView(

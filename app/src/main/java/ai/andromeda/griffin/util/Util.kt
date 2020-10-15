@@ -14,7 +14,7 @@ import androidx.work.*
 import com.google.gson.Gson
 import java.util.*
 
-
+//--------- DEVICE ID GENERATOR ------------//
 fun generateDeviceId(): String {
     val random = Random()
     val sb = StringBuilder(ID_LENGTH)
@@ -23,15 +23,18 @@ fun generateDeviceId(): String {
     return sb.toString()
 }
 
+//--------------- TOAST MESSAGES ---------------//
 fun showMessage(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
+//---------------- JSON TO INT ARRAY ------------------//
 fun toArray(json: String): IntArray? {
     val arrayParser = Gson()
     return arrayParser.fromJson(json, IntArray::class.java)
 }
 
+//----------------- MQTT START REQUEST ---------------//
 fun makeMqttServiceRequest() {
     Log.i(LOG_TAG, "UTIL: MQTT SERVICE REQUESTED")
     val constraints = Constraints.Builder()
@@ -43,10 +46,10 @@ fun makeMqttServiceRequest() {
         .build()
 
     val workManager = WorkManager.getInstance()
-
     workManager.enqueueUniqueWork(WORK_TAG, ExistingWorkPolicy.KEEP, workRequest)
 }
 
+//--------------------- CHECK WIFI CONNECTION -----------------------//
 fun isWiFiConnected(context: Context): Boolean {
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
             as ConnectivityManager

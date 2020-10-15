@@ -19,17 +19,20 @@ class HomeViewModel(application: Application) :
     val aksAutoStart: LiveData<Long>
         get() = _askAutoStart
 
+    //-------------- INIT --------------//
     init {
         _askAutoStart.value = null
         initAskAutoStart()
     }
 
+    //----------- INIT AUTO START ----------//
     private fun initAskAutoStart() {
         _askAutoStart.value = SharedPreferencesManager.getLong(
             getApplication(), AUTO_START_KEY
         )
     }
 
+    //---------- ASKED FOR AUTO START PERMISSION ----------//
     fun doneAskingPermission() {
         _askAutoStart.value = null
         SharedPreferencesManager.putLong(getApplication(), AUTO_START_KEY, 1L)

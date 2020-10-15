@@ -82,6 +82,7 @@ class RegisterFragment : Fragment() {
         rootView.registrationForm.alpha = 0.1F
         rootView.progressDialog.visibility = View.VISIBLE
     }
+
     private fun hideProgress() {
         rootView.registrationForm.alpha = 1.0F
         rootView.progressDialog.visibility = View.GONE
@@ -136,8 +137,7 @@ class RegisterFragment : Fragment() {
                 if (numSensors > 999) {
                     rootView.sensorNumberInputField.error = getString(R.string.too_many_sensors)
                     Log.i(LOG_TAG, "REGISTER_F: PASSWORD FIELD EMPTY")
-                }
-                else {
+                } else {
                     val data = DeviceEntity(
                         deviceId = deviceId,
                         deviceName = deviceName,

@@ -20,11 +20,10 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Log.i(LOG_TAG, "APP: ON_CREATE() CALLED")
-        //createNotificationChannel()
-        //makeMqttServiceRequest()
         delayedInit()
     }
 
+    //------------ COROUTINE ---------------//
     private fun delayedInit() {
         applicationScope.launch {
             createNotificationChannel()
@@ -32,21 +31,33 @@ class App : Application() {
         }
     }
 
+    //------------------- NOTIFICATION CHANNELS -------------------//
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            //--------------- PERSISTENT CHANNEL ---------------//
             val persistentNotificationChannel = NotificationChannel(
                 PERSISTENT_CHANNEL_ID,
                 "MQTT SERVICE CHANNEL",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 setShowBadge(false)
+                enableLights(false)
+                enableVibration(false)
+                description = getString(R.string.persistent_channel_description)
             }
 
+            //------------------ ALERT CHANNEL -----------------//
             val alertNotificationChannel = NotificationChannel(
                 ALERT_CHANNEL_ID,
                 "ALERT NOTIFICATION CHANNEL",
                 NotificationManager.IMPORTANCE_HIGH
-            )
+            ).apply {
+                setShowBadge(true)
+                enableLights(true)
+                enableVibration(true)
+                description = getString(R.string.alert_channel_description)
+            }
 
             val notificationManager = getSystemService(
                 NotificationManager::class.java
@@ -56,17 +67,4 @@ class App : Application() {
             notificationManager.createNotificationChannel(alertNotificationChannel)
         }
     }
-
-// TODO PERIODIC WORK
-//        val workRequest = PeriodicWorkRequestBuilder<MqttWorker>(
-//            WORK_REPEAT_PERIOD, TimeUnit.MINUTES
-//        )
-//            .setConstraints(constraints)
-//            .build()
-//        WorkManager.getInstance().enqueueUniquePeriodicWork(
-//            WORK_NAME,
-//            ExistingPeriodicWorkPolicy.REPLACE,
-//            workRequest
-//        )
-
 }

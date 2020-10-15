@@ -14,8 +14,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
@@ -133,8 +132,7 @@ class RegisterViewModel(application: Application) :
                     val message = MqttMessage(encodedPayload)
                     client.publish(PUBLISH_TOPIC, message)
                     Log.i(LOG_TAG, "REGISTER_VM: PUBLISH -> $payload")
-                }
-                else {
+                } else {
                     showMessage(getApplication(), "NO CONNECTION")
                 }
             }
@@ -187,7 +185,7 @@ class RegisterViewModel(application: Application) :
     fun saveData() {
         if (::deviceEntity.isInitialized) {
             writeToSharedPreferences(deviceEntity)
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch {
                 database.insert(deviceEntity)
             }
             Log.i(LOG_TAG, "REGISTER_VM: WRITING TO DB")
@@ -212,11 +210,9 @@ class RegisterViewModel(application: Application) :
         SharedPreferencesManager.putString(getApplication(), valueKey, values.toString())
 
         // Saving Device Name to Show in Future Alert Notifications
-        deviceId.let {
-            SharedPreferencesManager.putString(
-                getApplication(), deviceId, deviceName.toString()
-            )
-        }
+        SharedPreferencesManager.putString(
+            getApplication(), deviceId, deviceName.toString()
+        )
 
         //------------------------- SAVE DEVICE ID ------------------------//
         var allId = SharedPreferencesManager.getString(getApplication(), DEVICE_ID_KEY)
